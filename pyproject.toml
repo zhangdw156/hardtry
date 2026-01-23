@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hardtry"
+dynamic = ["version"]
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=4.5.0",
+]
+
+[tool.hatch.version]
+path = "src/hardtry/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hardtry"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/hardtry/",
+    "README.md",
+    "pyproject.toml",
+]
