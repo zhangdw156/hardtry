@@ -2,8 +2,8 @@ import json
 from datasets import load_dataset
 
 # 1. 设置文件路径
-input_path = "data/HardGen/bfcl_multi_turn.json"
-output_path = "data/HardGen/bfcl_messages_format.json"
+input_path = "data/bfcl_multi_turn.json"
+output_path = "data/bfcl_messages_format.json"
 
 # 2. 使用 load_dataset 加载数据
 print(f"正在加载数据集: {input_path}")
@@ -75,7 +75,8 @@ print(json.dumps(converted_ds[0]["messages"][:3], indent=2, ensure_ascii=False))
 print("...")
 
 # 5. 保存为最终 JSON 文件 (用于 Swift/LLaMA-Factory)
-print(f"\n正在保存至: {output_path}")
-converted_ds.to_json(output_path, force_ascii=False, indent=2)
+final_data = converted_ds.to_list()
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(final_data, f, ensure_ascii=False, indent=2)
 
 print("完成！")
