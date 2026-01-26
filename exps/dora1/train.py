@@ -20,9 +20,8 @@ class ScriptArguments:
     total_batch_size: int = field(default=64, metadata={"help": "目标总Batch Size"})
     per_device_batch_size: int = field(default=4, metadata={"help": "单张卡的显存允许的Batch Size"})
     model_path: str = field(default="/dfs/data/models/Qwen3-4B-Thinking-2507", metadata={"help": "模型路径"})
-    max_seq_length: int = field(default=4096, metadata={"help": "强制截断长度"})
     local_rank: int = field(default=-1, metadata={"help": "DeepSpeed会自动传入"})
-    # 【新增】定义 deepspeed 参数，防止 parser 报错
+    # 定义 deepspeed 参数，防止 parser 报错
     deepspeed: str = field(default=None, metadata={"help": "DeepSpeed 配置文件路径"})
 
 parser = HfArgumentParser(ScriptArguments)
@@ -54,13 +53,14 @@ if int(os.environ.get("RANK", 0)) == 0:
 processor = AutoTokenizer.from_pretrained(script_args.model_path)
 processor.padding_side = "right" # 训练必须右填充
 
-raw_data_path = "../data/bfcl_multi_turn.json"
+raw_data_path = "../../data/bfcl_multi_turn.json"
 raw_ds = load_dataset("json", data_files=raw_data_path, split="train")
 # 采样并打乱
 raw_ds = raw_ds.shuffle(seed=42).select(range(5000))
+with open("../../data/system_prompt.txt", "w") as f:
+    f.write(raw_ds[0]["0"]["content"].split('[{"name"')[0])
 
 def convert_to_openai(example):
-    # (保留你原来的转换逻辑，此处省略以节省篇幅，逻辑不变)
     messages = []
     if example.get("0") is not None:
         messages.append({"role": "system", "content": example["0"].get("content", "")})
@@ -75,6 +75,11 @@ def convert_to_openai(example):
     return {"messages": messages}
 
 converted_ds = raw_ds.map(convert_to_openai, remove_columns=raw_ds.column_names)
+prompt_demo = processor.apply_chat_template(
+    converted_ds[0]["messages"], add_generation_prompt=False, tokenize=False
+)
+with open("../../data/prompt_demo.txt", "w") as f:
+    f.write(prompt_demo)
 
 def format_and_mask_last_turn(example):
     messages = example["messages"]
@@ -122,7 +127,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
 )
 
-# 【关键】多卡环境下，必须指定 device_map 为当前进程的 local_rank
+# 多卡环境下，必须指定 device_map 为当前进程的 local_rank
 # DeepSpeed 会管理 local_rank 环境变量
 local_rank = int(os.environ.get("LOCAL_RANK", 0))
 device_map = {"": local_rank}
@@ -155,14 +160,18 @@ if local_rank == 0:
 
 # --- 4. 训练设置 ---
 # SwanLab 配置 (通过环境变量控制)
+# 1. 获取当前脚本所在的目录名称
+current_dir_name = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+# 2. 拼接新的输出路径
+dynamic_output_dir = f"../../checkpoints/{current_dir_name}"
 if local_rank == 0:
     import os
     os.environ["SWANLAB_PROJECT"] = "hardtry"
 
 training_args = TrainingArguments(
-    output_dir="../checkpoints",
+    output_dir=dynamic_output_dir,
     per_device_train_batch_size=script_args.per_device_batch_size,
-    gradient_accumulation_steps=grad_accum_steps, # <--- 动态传入
+    gradient_accumulation_steps=grad_accum_steps,
     num_train_epochs=1,
     learning_rate=1e-4,
     logging_steps=10,
