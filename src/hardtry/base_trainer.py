@@ -49,9 +49,15 @@ class BaseHardTryTrainer(Trainer):
         tokenizer = AutoTokenizer.from_pretrained(self.model_args.model_name_or_path)
         tokenizer.padding_side = "right"
 
-        # B. Quantization
+        # 获取微调类型 (转小写)
+        tune_type = self.script_args.tune_type.lower()
+        print(f"🔥 Training Strategy: {tune_type.upper()}")
+
+        # =====================================================
+        # B. Quantization 配置
+        # =====================================================
         bnb_config = None
-        if self.model_args.use_4bit_quant:
+        if tune_type != "full" and self.model_args.use_4bit_quant:
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -63,29 +69,37 @@ class BaseHardTryTrainer(Trainer):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_args.model_name_or_path,
             quantization_config=bnb_config,
-            device_map={"": int(os.environ.get("LOCAL_RANK", 0))},
+            torch_dtype=torch.bfloat16 if tune_type == "full" else "auto",
+            device_map={"": self.local_rank},
             attn_implementation=self.model_args.attn_implementation,
         )
 
-        if self.model_args.use_4bit_quant:
+        if bnb_config is not None:
             model = prepare_model_for_kbit_training(model)
 
-        # D. LoRA
-        peft_config = LoraConfig(
-            r=self.script_args.lora_r,
-            lora_alpha=self.script_args.lora_alpha,
-            lora_dropout=self.script_args.lora_dropout,
-            task_type="CAUSAL_LM",
-            target_modules=self.script_args.target_modules,
-            use_dora=self.script_args.use_dora,
-            bias="none"
-        )
-        model = get_peft_model(model, peft_config)
-        model.config.use_cache = False
-        
-        if int(os.environ.get("LOCAL_RANK", 0)) == 0:
-            model.print_trainable_parameters()
+        if tune_type == "full":
+            model.config.use_cache = False
+            pass
             
+        elif tune_type in ["lora", "dora"]:
+            # 决定是否开启 DoRA
+            is_dora = (tune_type == "dora")
+            
+            peft_config = LoraConfig(
+                r=self.script_args.lora_r,
+                lora_alpha=self.script_args.lora_alpha,
+                lora_dropout=self.script_args.lora_dropout,
+                task_type="CAUSAL_LM",
+                target_modules=self.script_args.target_modules,
+                use_dora=is_dora,
+                bias="none"
+            )
+            model = get_peft_model(model, peft_config)
+            model.config.use_cache = False
+        
+        else:
+            raise ValueError(f"Unsupported tune_type: {tune_type}. Use 'full', 'lora', or 'dora'.")
+        
         return model, tokenizer
 
     def process_dataset(self, tokenizer):

@@ -9,6 +9,9 @@ class ModelArguments:
 
 @dataclass
 class ScriptArguments:
+    # --- 核心微调策略 ---
+    # 新增参数: 支持 "full", "lora", "dora"
+    tune_type: str = field(default="lora", metadata={"help": "微调类型: 'full', 'lora', 'dora'"})
     # --- 数据控制 ---
     data_path: str = field(default="../../data/bfcl_multi_turn.json")
     train_subset_size: int = field(default=5000, metadata={"help": "训练集采样数量"})
@@ -18,7 +21,6 @@ class ScriptArguments:
     lora_r: int = field(default=16)
     lora_alpha: int = field(default=32)
     lora_dropout: float = field(default=0.05)
-    use_dora: bool = field(default=True, metadata={"help": "是否开启 DoRA"})
     target_modules: List[str] = field(default_factory=lambda: ["q_proj", "k_proj", "v_proj", "o_proj"])
     
     # --- 其他 ---
