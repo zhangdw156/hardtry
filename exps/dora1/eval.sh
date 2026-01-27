@@ -34,13 +34,13 @@ echo "======================================================="
 # 执行生成 (Generate)
 # =========================================================
 # echo "▶️ [1/2] Running Generation..."
-# bfcl generate \
-#     --model "$MODEL_NAME" \
-#     --test-category "$TEST_CATEGORY" \
-#     --backend vllm \
-#     --skip-server-setup \
-#     --num-threads "$THREADS" \
-#     --result-dir "$ARTIFACT_DIR/result"
+bfcl generate \
+    --model "$MODEL_NAME" \
+    --test-category "$TEST_CATEGORY" \
+    --backend vllm \
+    --skip-server-setup \
+    --num-threads "$THREADS" \
+    --result-dir "$ARTIFACT_DIR/result"
 
 # =========================================================
 # 执行评测 (Evaluate)
