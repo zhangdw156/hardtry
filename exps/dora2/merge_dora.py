@@ -4,9 +4,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # 1. 配置路径
 base_model_path = "/dfs/data/models/Qwen3-4B-Thinking-2507"
-lora_path = "/dfs/data/work/hardtry/checkpoints/dora1"
+lora_path = "/dfs/data/work/hardtry/checkpoints/dora2/checkpoint-75"
 # 合并后的新模型保存位置
-output_path = "/dfs/data/models/sloop-4b_dora1"
+output_path = "/dfs/data/models/sloop-4b_dora2"
 
 print(f"Loading base model from {base_model_path}...")
 # 注意：合并权重时建议用 float16 或 bfloat16，不要用 quantization (如 load_in_4bit)，否则无法无损合并

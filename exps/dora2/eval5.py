@@ -3,6 +3,7 @@ import subprocess
 import time
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
+import shutil
 
 # ================= 配置区 =================
 MODEL_NAME = "Qwen/Qwen3-4B-FC"
@@ -20,7 +21,7 @@ BASE_ARTIFACT_DIR = os.path.join(SCRIPT_DIR, "../../eval_results", f"{CURRENT_DI
 ENV_VARS = {
     "REMOTE_OPENAI_BASE_URL": "http://localhost:8000/v1",
     "REMOTE_OPENAI_API_KEY": "EMPTY",
-    "REMOTE_OPENAI_TOKENIZER_PATH": "/dfs/data/models/Qwen3-4B-Thinking-2507",
+    "REMOTE_OPENAI_TOKENIZER_PATH": "/dfs/data/models/sloop-4b_dora2",
     "PATH": os.environ.get("PATH", "") # 保持原有的 PATH
 }
 
@@ -63,6 +64,46 @@ def run_single_eval(run_id):
             print(f"💥 [Run {run_id}] 抛出异常: {e}")
             return False
 
+def collect_results():
+    """收集并重命名 csv 结果文件"""
+    # 定义目标目录: 当前脚本目录下的 eval5_results
+    dest_dir = os.path.join(SCRIPT_DIR, "eval5_results")
+    os.makedirs(dest_dir, exist_ok=True)
+    
+    print(f"\n📦 [Collection] 开始收集 CSV 结果到: {dest_dir}")
+
+    if not os.path.exists(BASE_ARTIFACT_DIR):
+        print("❌ 结果根目录不存在，无法收集。")
+        return
+
+    count = 0
+    # 遍历 BASE_ARTIFACT_DIR 下的所有文件夹 (例如 run_1_0127_xxxx)
+    for folder_name in sorted(os.listdir(BASE_ARTIFACT_DIR)):
+        run_path = os.path.join(BASE_ARTIFACT_DIR, folder_name)
+        
+        # 确保是文件夹且以 run_ 开头
+        if os.path.isdir(run_path) and folder_name.startswith("run_"):
+            # 原始文件路径: .../run_x_xx/score/data_multi_turn.csv
+            # 注意：根据 bfcl evaluate 命令，结果通常在 score 目录下
+            src_file = os.path.join(run_path, "score", "data_multi_turn.csv")
+            
+            if os.path.exists(src_file):
+                # 构造新文件名: data_multi_turn_run_1_0127_xxxx.csv
+                # folder_name 本身就是 "run_1_0127_xxxx"
+                new_filename = f"data_multi_turn_{folder_name}.csv"
+                dest_file = os.path.join(dest_dir, new_filename)
+                
+                try:
+                    shutil.copy(src_file, dest_file)
+                    print(f"  -> 已复制: {new_filename}")
+                    count += 1
+                except Exception as e:
+                    print(f"  ❌ 复制失败 {folder_name}: {e}")
+            else:
+                print(f"  ⚠️ 未找到文件: {src_file}")
+
+    print(f"✅ 收集完成，共复制 {count} 个文件。\n")
+
 def main():
     print("=======================================================")
     print(f"🔥 开始并行实验 (总计 {NUM_RUNS} 次)")
@@ -84,6 +125,7 @@ def main():
     print(f"成功: {success_count}/{NUM_RUNS}")
     print(f"总耗时: {(end_time - start_time)/60:.2f} 分钟")
     print("="*55)
+    collect_results()
 
 if __name__ == "__main__":
     main()
