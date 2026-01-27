@@ -14,32 +14,27 @@ class BaseHardTryTrainer(Trainer):
         self.local_rank = training_args.local_rank
         if self.local_rank == -1:
             self.local_rank = int(os.environ.get("LOCAL_RANK", -1))
-        # 保存参数，供内部方法使用
         self.model_args = model_args
         self.script_args = script_args
-        # 注意：training_args 会在 super().__init__ 中被父类保存为 self.args
         
-        # 1. 加载模型和 Tokenizer (这是我们在调用父类初始化前必须准备好的)
-        model, tokenizer = self._init_model_and_tokenizer()
-        
-        # 2. 数据处理 (调用抽象方法，由子类实现)
-        train_dataset, eval_dataset = self.process_dataset(tokenizer)
-        
-        # 3. 动态计算梯度累积
         world_size = int(os.environ.get("WORLD_SIZE", 1))
         auto_grad_accum = self.script_args.total_batch_size // (
             training_args.per_device_train_batch_size * world_size
         )
         training_args.gradient_accumulation_steps = max(1, auto_grad_accum)
 
-        # 4. 调用父类 Trainer 的初始化
-        # 此时我们将准备好的 model, dataset, data_collator 全部传进去
+        self.training_args = training_args
+
+        model, tokenizer = self._init_model_and_tokenizer()
+        
+        train_dataset, eval_dataset = self.process_dataset(tokenizer)
+
         super().__init__(
             model=model,
             args=training_args,
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
-            processing_class=tokenizer, # 新版 transformers 建议传 processing_class (即 tokenizer)
+            processing_class=tokenizer,
             data_collator=DataCollatorForSeq2Seq(tokenizer, padding=True, pad_to_multiple_of=8)
         )
 
@@ -49,7 +44,7 @@ class BaseHardTryTrainer(Trainer):
         tokenizer = AutoTokenizer.from_pretrained(self.model_args.model_name_or_path)
         tokenizer.padding_side = "right"
 
-        # 获取微调类型 (转小写)
+        # 获取微调类型
         tune_type = self.script_args.tune_type.lower()
         print(f"🔥 Training Strategy: {tune_type.upper()}")
 
@@ -66,11 +61,13 @@ class BaseHardTryTrainer(Trainer):
             )
 
         # C. Model
+        is_deepspeed_enabled = self.training_args.deepspeed is not None
+        device_map = None if is_deepspeed_enabled else {"": self.local_rank}
         model = AutoModelForCausalLM.from_pretrained(
             self.model_args.model_name_or_path,
             quantization_config=bnb_config,
             torch_dtype=torch.bfloat16 if tune_type == "full" else "auto",
-            device_map={"": self.local_rank},
+            device_map=device_map,
             attn_implementation=self.model_args.attn_implementation,
         )
 

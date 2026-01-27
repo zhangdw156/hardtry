@@ -10,8 +10,8 @@ class ModelArguments:
 @dataclass
 class ScriptArguments:
     # --- 核心微调策略 ---
-    # 新增参数: 支持 "full", "lora", "dora"
     tune_type: str = field(default="lora", metadata={"help": "微调类型: 'full', 'lora', 'dora'"})
+
     # --- 数据控制 ---
     data_path: str = field(default="../../data/bfcl_multi_turn.json")
     train_subset_size: int = field(default=5000, metadata={"help": "训练集采样数量"})
