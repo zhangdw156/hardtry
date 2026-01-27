@@ -53,7 +53,12 @@ For each function call, return a json object with function name and arguments wi
 <|im_start|>user
 Determine the current working directory path, and then search for all files and directories in the current directory and its subdirectories.<|im_end|>
 <|im_start|>assistant
-[pwd(), find(path=".")]<|im_end|>
+<tool_call>
+{"name": "pwd", "arguments": {}}
+</tool_call>
+<tool_call>
+{"name": "find", "arguments": {"path": "."}}
+</tool_call><|im_end|>
 <|im_start|>user
 <tool_response>
 {"name": "pwd", "arguments": {"current_working_directory": "/workspace"}}
@@ -114,7 +119,18 @@ The 'cat' requires the file name in current directory. After cd data, unggv.json
 Therefore, the correct function calls are as above.
 </think>
 
-[cd(folder="data"), cat(file_name="unggv.json"), cd(folder="raw"), tail(file_name="dtpsp.json", lines=7)]<|im_end|>
+<tool_call>
+{"name": "cd", "arguments": {"folder": "data"}}
+</tool_call>
+<tool_call>
+{"name": "cat", "arguments": {"file_name": "unggv.json"}}
+</tool_call>
+<tool_call>
+{"name": "cd", "arguments": {"folder": "raw"}}
+</tool_call>
+<tool_call>
+{"name": "tail", "arguments": {"file_name": "dtpsp.json", "lines": 7}}
+</tool_call><|im_end|>
 <|im_start|>user
 <tool_response>
 {"name": "cd", "arguments": {"current_working_directory": "data"}}

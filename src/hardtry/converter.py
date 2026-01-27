@@ -54,7 +54,7 @@ def convert_python_to_xml(input_str):
 # --- 测试 ---
 if __name__ == '__main__':
     # 这是一个纯字符串，不是代码执行
-    input_text = '[cd(folder="data"), cat(file_name="unggv.json"), cd(folder="raw"), tail(file_name="dtpsp.json", lines=7)]'
+    input_text = '[cd(folder="documents"), touch(file_name="data.csv"), cd(folder=".."), cd(folder="src"), cd(folder="code"), touch(file_name="metadata.json"), echo(content="A sample content constructed by bfcl multi-turn pipline.", file_name="metadata.json")]'
 
     # 转换
     output_text = convert_python_to_xml(input_text)

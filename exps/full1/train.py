@@ -21,22 +21,22 @@ class Full1Trainer(BaseHardTryTrainer):
         if not content:
             return content
         
-        delimiter = "</think>\n\n"
+        delimiter = "</think>"
         
         if delimiter in content:
             parts = content.rsplit(delimiter, 1)
-            prefix = parts[0] + delimiter 
-            suffix = parts[1]
+            prefix = parts[0] + "</think>\n\n" 
+            suffix = parts[1].strip()
         else:
             prefix = ""
             suffix = content
 
-        formatted_tools = convert_python_to_xml(suffix)
-
-        if prefix:
+        # print(f"prefix:{prefix}")
+        # print(f"suffix:{suffix}")
+        if suffix.startswith("[") and suffix.endswith("]"):
+            formatted_tools = convert_python_to_xml(suffix)
             return prefix + formatted_tools
-        else:
-            return formatted_tools
+        return prefix+suffix
 
     def _convert_to_openai(self, example):
         """HardGen -> OpenAI 格式转换"""
