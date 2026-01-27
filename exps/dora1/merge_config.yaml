@@ -1,0 +1,7 @@
+base_model_path: "/dfs/data/models/Qwen3-4B-Thinking-2507"
+lora_path: "/dfs/data/work/hardtry/checkpoints/dora1/checkpoint-75"
+output_path: "/dfs/data/models/sloop-4b_dora1"
+
+# 可选配置
+device: "auto"
+torch_dtype: "bfloat16"
