@@ -26,6 +26,10 @@ class ScriptArguments:
 
 parser = HfArgumentParser(ScriptArguments)
 script_args = parser.parse_args_into_dataclasses()[0]
+# 多卡环境下，必须指定 device_map 为当前进程的 local_rank
+# DeepSpeed 会管理 local_rank 环境变量
+local_rank = int(os.environ.get("LOCAL_RANK", 0))
+device_map = {"": local_rank}
 
 # --- 1. 动态计算梯度累积步数 ---
 # 获取当前使用的 GPU 数量 (World Size)
@@ -119,6 +123,15 @@ processed_dataset = converted_ds.map(format_and_mask_last_turn, remove_columns=c
 # 过滤掉无效数据
 processed_dataset = processed_dataset.filter(lambda x: len(x["input_ids"]) > 0)
 
+split_ds = processed_dataset.train_test_split(test_size=0.05, seed=42)
+train_dataset = split_ds["train"]
+eval_dataset = split_ds["test"]
+
+if local_rank <= 0:
+    print(f"--- 数据切分完成 ---")
+    print(f"训练集样本数: {len(train_dataset)}")
+    print(f"验证集样本数: {len(eval_dataset)}")
+
 # --- 3. 模型加载 ---
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -126,11 +139,6 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_compute_dtype=torch.bfloat16,
     bnb_4bit_use_double_quant=True,
 )
-
-# 多卡环境下，必须指定 device_map 为当前进程的 local_rank
-# DeepSpeed 会管理 local_rank 环境变量
-local_rank = int(os.environ.get("LOCAL_RANK", 0))
-device_map = {"": local_rank}
 
 model = AutoModelForCausalLM.from_pretrained(
     script_args.model_path,
@@ -175,13 +183,16 @@ training_args = TrainingArguments(
     num_train_epochs=1,
     learning_rate=1e-4,
     logging_steps=10,
+    eval_strategy="steps",            # 设置为按步数验证
+    eval_steps=10,                    # 每 10 step 验证一次
+    per_device_eval_batch_size=script_args.per_device_batch_size,
     fp16=False,
     bf16=True,
     optim="paged_adamw_32bit",
     report_to="swanlab" if local_rank == 0 else "none", # 只有主进程汇报
     gradient_checkpointing=True,
     group_by_length=True,
-    ddp_find_unused_parameters=False, # 这通常能减少 DDP 报错
+    ddp_find_unused_parameters=False,
     save_strategy="epoch",
     deepspeed=script_args.deepspeed
 )
@@ -195,7 +206,8 @@ data_collator = DataCollatorForSeq2Seq(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=processed_dataset,
+    train_dataset=train_dataset,      # 传入训练集
+    eval_dataset=eval_dataset,        # 传入验证集
     data_collator=data_collator,
 )
 
