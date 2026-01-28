@@ -10,6 +10,8 @@ from transformers import (
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 import swanlab
 from datasets import load_dataset
+import numpy as np
+from rich import print
 
 class BaseHardTryTrainer(Trainer):
     def __init__(self, model_args, training_args, script_args):
@@ -169,6 +171,9 @@ class BaseHardTryTrainer(Trainer):
             remove_columns=converted_ds.column_names
         ).filter(lambda x: len(x["input_ids"]) > 0)
 
+        if self.local_rank <= 0:
+            self._print_length_distribution(processed_dataset)
+            
         # 验证集切分
         split_ds = processed_dataset.train_test_split(
             test_size=self.script_args.validation_split_percentage, 
@@ -200,6 +205,56 @@ class BaseHardTryTrainer(Trainer):
             
         return {"input_ids": input_ids, "labels": labels, "attention_mask": full_enc["attention_mask"]}
     
+    def _print_length_distribution(self, dataset):
+        """
+        统计并打印 input_ids 的长度分布
+        """
+        # 提取所有样本的长度
+        # 注意：如果数据集非常大(百万级)，直接 list 可能爆内存，可以采样
+        print(f"📊 Calculating token length distribution for {len(dataset)} samples...")
+        
+        lengths = [len(x) for x in dataset["input_ids"]]
+        
+        if not lengths:
+            print("⚠️ Dataset is empty, skipping length statistics.")
+            return
+
+        # 计算统计量
+        min_len = np.min(lengths)
+        max_len = np.max(lengths)
+        mean_len = np.mean(lengths)
+        median_len = np.median(lengths)
+        p90 = np.percentile(lengths, 90)
+        p95 = np.percentile(lengths, 95)
+        p99 = np.percentile(lengths, 99)
+
+        # 打印统计表格
+        print("\n" + "="*50)
+        print("📏 Token Length Distribution Statistics")
+        print("="*50)
+        print(f"Total Samples : {len(lengths)}")
+        print(f"Min Length    : {min_len}")
+        print(f"Max Length    : {max_len}")
+        print(f"Mean Length   : {mean_len:.2f}")
+        print(f"Median (P50)  : {median_len:.2f}")
+        print(f"P90 Length    : {p90:.2f}")
+        print(f"P95 Length    : {p95:.2f}")
+        print(f"P99 Length    : {p99:.2f}")
+        print("-" * 50)
+
+        # 简单的 ASCII 直方图
+        # 将长度分为 10 个区间
+        hist, bin_edges = np.histogram(lengths, bins=10)
+        print("📈 Distribution Histogram:")
+        max_count = max(hist)
+        for count, edge in zip(hist, bin_edges[:-1]):
+            # 计算条形长度 (最大为 30 个字符)
+            bar_len = int(count / max_count * 30)
+            bar = "█" * bar_len
+            range_str = f"{int(edge):<5} - {int(edge + (bin_edges[1]-bin_edges[0])):<5}"
+            print(f"{range_str} | {bar:<30} ({count})")
+        print("="*50 + "\n")
+
     def _convert_to_openai(self, example):
         """
         转换成openai格式的messages
