@@ -1,0 +1,43 @@
+# --- ModelArguments ---
+model_name_or_path: "/dfs/data/models/Qwen3-4B-Thinking-2507"
+use_4bit_quant: true
+attn_implementation: "sdpa"
+# attn_implementation: "flash_attention_2"
+
+# --- ScriptArguments ---
+tune_type: "dora"
+data_path: "../../data/bfcl_multi_turn.json"
+train_subset_size: 5000
+validation_split_percentage: 0.05
+total_batch_size: 64
+system_prompt_save_path: "system_prompt_check.txt"
+prompt_demo_save_path: "promt_demo_check.txt"
+# swamlab
+swanlab_project: "hardtry"
+swanlab_experiment: "dora3"
+
+# TrainingArguments (HF 标准参数)
+output_dir: "../../checkpoints/dora3"
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+num_train_epochs: 1
+learning_rate: 0.0002
+weight_decay: 0.01
+warmup_ratio: 0.03
+
+# 显存优化相关
+gradient_checkpointing: true
+optim: "paged_adamw_32bit"
+bf16: true
+fp16: false
+ddp_find_unused_parameters: false
+
+# 验证与日志
+eval_strategy: "steps"
+eval_steps: 10
+logging_steps: 10
+save_strategy: "epoch"
+report_to: "swanlab"
+# 分布式
+deepspeed: "configs/ds_config.json"
+
