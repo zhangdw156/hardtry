@@ -103,7 +103,7 @@ class ParallelEvalRunner:
     def collect_results(self):
         """收集并重命名 csv 结果文件"""
         
-        # 【关键修改】判断用户是否指定了汇总路径
+        # 判断用户是否指定了汇总路径
         if self.args.summary_output_dir:
             # 如果用户指定了路径，就用用户的
             dest_dir = self.args.summary_output_dir

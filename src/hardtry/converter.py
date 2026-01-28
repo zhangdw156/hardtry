@@ -1,61 +1,109 @@
 import ast
 import json
 
-def convert_python_to_xml(input_str):
+def _get_node_name(node):
     """
-    解析 Python 函数调用格式的字符串，转换为 <tool_call> XML 格式。
-    不执行代码，仅做静态语法解析。
+    递归提取复杂的函数名。
+    支持: print, os.path.join, tools['search'], get_tool()
+    """
+    if isinstance(node, ast.Name):
+        return node.id
+    elif isinstance(node, ast.Attribute):
+        return f"{_get_node_name(node.value)}.{node.attr}"
+    elif isinstance(node, ast.Subscript):
+        value = _get_node_name(node.value)
+        slice_val = "?"
+        if isinstance(node.slice, ast.Constant):
+            slice_val = repr(node.slice.value)
+        else:
+            slice_val = ast.unparse(node.slice)
+        return f"{value}[{slice_val}]"
+    elif isinstance(node, ast.Call):
+        return ast.unparse(node)
+    else:
+        return ast.unparse(node)
+
+def _get_arg_value(node):
+    """
+    解析参数值。
+    策略：优先转为 Python 原生对象 (int, str, list...)，
+    如果遇到变量或表达式 (如 x+1, func())，则回退为源码字符串。
+    """
+    try:
+        # 尝试把 AST 节点转为 Python 对象 (例如: "hello", 123, [1, 2])
+        return ast.literal_eval(node)
+    except (ValueError, TypeError, SyntaxError):
+        # 如果包含变量、函数调用或运算 (例如: x, 1+1, call())
+        # 使用 unparse 还原为代码字符串
+        return ast.unparse(node)
+
+def convert_python_to_xml(input_str:str)->list[dict]:
+    """
+    将 Python 函数调用列表转换为 <tool_call> XML 格式。
+    静态解析，安全，不执行代码。
     """
     result_parts = []
     
     try:
-        # 1. 使用 ast 解析字符串结构 (mode='eval' 表示解析一个表达式)
-        tree = ast.parse(input_str, mode='eval')
+        # 1. 解析模式：eval (处理表达式)
+        tree = ast.parse(input_str.strip(), mode='eval')
         
-        # 2. 确保最外层是一个列表 [...]
+        # 2. 校验最外层是否为列表
         if not isinstance(tree.body, ast.List):
-            return "Error: Input string must be a list [ ... ]"
+            # 容错处理：如果用户没有包 [], 尝试把它当做单个 Call 处理?
+            # 这里为了严谨，我们坚持要求是列表，或者你可以扩展逻辑
+            return "Error: Input must be a list of calls, e.g., [func1(), func2()]"
             
-        # 3. 遍历列表中的每一个元素
+        # 3. 遍历列表元素
         for node in tree.body.elts:
-            # 确保元素是一个函数调用，例如 cd(...)
+            # 只处理函数调用
             if isinstance(node, ast.Call):
-                # --- A. 提取函数名 ---
-                # node.func.id 就是函数名 (如 'cd', 'cat')
-                func_name = node.func.id
+                # --- A. 获取全能函数名 ---
+                func_name = _get_node_name(node.func)
                 
-                # --- B. 提取关键字参数 ---
-                # node.keywords 包含所有 key=value 形式的参数
                 args_dict = {}
+                
+                # --- B. 处理位置参数 (Positional Args) ---
+                for i, arg in enumerate(node.args):
+                    args_dict[f"arg_{i}"] = _get_arg_value(arg)
+                
+                # --- C. 处理关键字参数 (Keyword Args) ---
                 for keyword in node.keywords:
-                    key = keyword.arg  # 参数名，如 'folder'
-                    # keyword.value 是 AST 节点，我们需要它的字面值
-                    # literal_eval 安全地将 AST 节点转为 Python 基本类型 (str, int, bool)
-                    value = ast.literal_eval(keyword.value)
+                    key = keyword.arg
+                    value = _get_arg_value(keyword.value)
                     args_dict[key] = value
                 
-                # --- C. 构建 JSON 和 XML ---
+                # --- D. 构建 json ---
+                # 使用 ensure_ascii=False 保证中文不乱码
                 json_args = json.dumps(args_dict, ensure_ascii=False)
                 
-                xml_block = (
-                    f'<tool_call>\n'
-                    f'{{"name": "{func_name}", "arguments": {json_args}}}\n'
-                    f'</tool_call>'
-                )
-                result_parts.append(xml_block)
-                
+                json_block :dict= {"name": func_name, "arguments": json_args}
+                result_parts.append(json_block)
+            else:
+                # 如果列表里混入了非函数调用的东西（比如 [1, 2]），选择跳过或报警
+                print(f"Warning: Skipped non-call element: {ast.unparse(node)}")
+
     except SyntaxError as e:
-        return f"解析错误: 输入的字符串不符合 Python 语法 format. ({e})"
+        return f"SyntaxError: 输入的代码不符合 Python 语法。详情: {e}"
     except Exception as e:
-        return f"转换过程中发生错误: {e}"
+        return f"SystemError: 转换过程发生未知错误: {e}"
 
-    return "\n".join(result_parts)
+    return result_parts
 
-# --- 测试 ---
+# --- 各种刁钻的测试用例 ---
 if __name__ == '__main__':
-    # 这是一个纯字符串，不是代码执行
-    input_text = '[cd(folder="documents"), touch(file_name="data.csv"), cd(folder=".."), cd(folder="src"), cd(folder="code"), touch(file_name="metadata.json"), echo(content="A sample content constructed by bfcl multi-turn pipline.", file_name="metadata.json")]'
-
-    # 转换
-    output_text = convert_python_to_xml(input_text)
-    print(output_text)
+    test_case = """
+[
+    cd(folder="documents"), 
+    os.path.join(path="src", file="main.py"), 
+    tools['search'](query="AI Agents"), 
+    tools["search"](query="AI Agents"), 
+    calculator(1, 2, mode="add"), 
+    complex_func(param=x_variable, param2=1+1, callback=lambda x: x)
+]
+"""
+    
+    print("--- 输入 ---")
+    print(test_case.strip())
+    print("\n--- 输出 ---")
+    print(convert_python_to_xml(test_case))

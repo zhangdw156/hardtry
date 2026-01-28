@@ -27,3 +27,7 @@ class ScriptArguments:
     total_batch_size: int = field(default=64, metadata={"help": "目标总 Batch Size (自动计算梯度累积)"})
     system_prompt_save_path: Optional[str] = field(default=None)
     prompt_demo_save_path: Optional[str] = field(default=None)
+
+    # ---swanlab ---
+    swanlab_project: Optional[str] = field(default=None)
+    swanlab_experiment: Optional[str] = field(default=None)
