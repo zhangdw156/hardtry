@@ -8,6 +8,8 @@ from transformers import (
     DataCollatorForSeq2Seq
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+import swanlab
+from datasets import load_dataset
 
 class BaseHardTryTrainer(Trainer):
     def __init__(self, model_args, training_args, script_args):
