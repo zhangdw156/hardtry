@@ -173,7 +173,7 @@ class BaseHardTryTrainer(Trainer):
 
         if self.local_rank <= 0:
             self._print_length_distribution(processed_dataset)
-            
+
         # 验证集切分
         split_ds = processed_dataset.train_test_split(
             test_size=self.script_args.validation_split_percentage, 
@@ -227,6 +227,49 @@ class BaseHardTryTrainer(Trainer):
         p90 = np.percentile(lengths, 90)
         p95 = np.percentile(lengths, 95)
         p99 = np.percentile(lengths, 99)
+
+        if self.local_rank <= 0:
+            # 1. 记录数值统计 (Scalars)
+            # 这些会显示在 Charts 区域，方便你对比不同实验的数据集差异
+            swanlab.log({
+                "dataset/len_min": min_len,
+                "dataset/len_max": max_len,
+                "dataset/len_mean": mean_len,
+                "dataset/len_p50": median_len,
+                "dataset/len_p90": p90,
+                "dataset/len_p95": p95,
+                "dataset/len_p99": p99,
+            })
+
+            # 2. 记录分布直方图 (Image)
+            # 生成一张专业的 matplotlib 图片并传给 swanlab
+            try:
+                import matplotlib.pyplot as plt
+                
+                # 创建画布
+                fig, ax = plt.subplots(figsize=(10, 6))
+                # 画直方图
+                ax.hist(lengths, bins=50, color='#4e79a7', edgecolor='black', alpha=0.7)
+                
+                # 标注关键线 (如 P95 和 Max)
+                ax.axvline(p95, color='r', linestyle='--', linewidth=1.5, label=f'P95: {int(p95)}')
+                ax.axvline(mean_len, color='g', linestyle='-', linewidth=1.5, label=f'Mean: {int(mean_len)}')
+                
+                # 设置标题和标签
+                ax.set_title("Token Length Distribution")
+                ax.set_xlabel("Length")
+                ax.set_ylabel("Count")
+                ax.legend()
+                
+                # 记录 Image 对象
+                swanlab.log({"dataset/len_dist_chart": swanlab.Image(fig)})
+                
+                # 关闭画布防止内存泄漏
+                plt.close(fig)
+            except ImportError:
+                print("⚠️ Matplotlib not installed. Skipping SwanLab chart logging.")
+            except Exception as e:
+                print(f"⚠️ Failed to log chart to SwanLab: {e}")
 
         # 打印统计表格
         print("\n" + "="*50)
