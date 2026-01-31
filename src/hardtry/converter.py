@@ -37,7 +37,7 @@ def _get_arg_value(node):
         # 使用 unparse 还原为代码字符串
         return ast.unparse(node)
 
-def convert_python_to_xml(input_str:str)->list[dict]:
+def convert_python_to_xml(input_str:str)->list[dict[str,str]]:
     """
     将 Python 函数调用列表转换为 <tool_call> XML 格式。
     静态解析，安全，不执行代码。
