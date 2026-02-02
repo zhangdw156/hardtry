@@ -65,11 +65,11 @@ actor_rollout_ref:
 
 trainer:
   project_name: hardtry
-  experiment_name: verl1
+  experiment_name: verl2
   n_gpus_per_node: 4
   nnodes: 1
   logger: ['console', 'swanlab']
-  default_local_dir: checkpoints/verl1
+  default_local_dir: checkpoints/verl2
   critic_warmup: 0.01
   save_freq: 10
   test_freq: 10
