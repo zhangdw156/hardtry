@@ -11,6 +11,9 @@ LOG_PATH="${SCRIPT_DIR}/logs/grpo.log"
 
 export RAY_DISABLE_DASHBOARD=1
 export WORLD_SIZE=$(nvidia-smi -L | wc -l)
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export VE_OMP_NUM_THREADS=4
 
 ${PYTHON_CMD} -m verl.trainer.main_ppo \
     --config-path=${CONFIG_PATH} \
