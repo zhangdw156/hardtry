@@ -21,7 +21,7 @@ data:
   filter_overlong_prompts: false
 
 actor_rollout_ref:
-  num_workers: 4
+  num_workers: ${oc.decode:${oc.env:WORLD_SIZE, 8}}
   model_sharing: true
   load_on_worker: false
   model:
@@ -32,7 +32,6 @@ actor_rollout_ref:
     lora_rank: 16
     lora_alpha: 32
     target_modules: all-linear
-    load_format="safetensors"
   actor:
     ppo_mini_batch_size: 32
     ppo_micro_batch_size_per_gpu: 1
@@ -66,7 +65,7 @@ actor_rollout_ref:
 trainer:
   project_name: hardtry
   experiment_name: verl2
-  n_gpus_per_node: 4
+  n_gpus_per_node: ${oc.decode:${oc.env:WORLD_SIZE, 8}}
   nnodes: 1
   logger: ['console', 'swanlab']
   default_local_dir: checkpoints/verl2
