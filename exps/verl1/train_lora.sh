@@ -11,4 +11,4 @@ fi
 
 ${PYTHON_CMD} -m verl.trainer.main_ppo \
     --config-path="/dfs/data/work/hardtry/exps/verl1/configs" \
-    --config-name="grpo_config" | tee ${SCRIPT_DIR}/logs/grpo.log
+    --config-name="grpo_lora_config" | tee ${SCRIPT_DIR}/logs/grpo_lora.log
