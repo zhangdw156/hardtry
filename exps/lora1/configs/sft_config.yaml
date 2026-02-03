@@ -1,0 +1,54 @@
+model: "/dfs/data/models/Qwen3-4B-Instruct-2507"
+loss_scale: "qwen"
+train_type: "lora"
+dataset:
+  - "/dfs/data/work/hardtry/data/openai_messages_fc.json"
+max_length: 10240
+
+# 显存优化
+attn_impl: "flash_attention"
+gradient_checkpointing: true
+packing: true
+
+# 硬件相关
+torch_dtype: "bfloat16"
+dataloader_num_workers: 8
+
+# 训练参数
+num_train_epochs: 1
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+learning_rate: 1e-4
+warmup_ratio: 0.05
+lr_scheduler_type: "cosine"
+gradient_accumulation_steps: 16
+max_grad_norm: 1.0
+
+# LoRA
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.01
+target_modules: "all-linear"
+
+# 监控与保存
+eval_steps: 10
+save_steps: 10
+save_total_limit: 2
+logging_steps: 10
+eval_strategy: "steps"
+save_strategy: "steps"
+split_dataset_ratio: 0.05
+eval_on_start: true
+output_dir: "/dfs/data/work/hardtry/checkpoints/lora1"
+seed: 42
+
+# SwanLab
+report_to: "swanlab"
+swanlab_project: "hardtry"
+swanlab_exp_name: "lora1"
+
+# DeepSpeed
+deepspeed: "/dfs/data/work/hardtry/exps/lora1/configs/ds_config.json"
+
+# 自定义元数据
+model_author: "zhangdw"
