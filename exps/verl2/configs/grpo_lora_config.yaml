@@ -21,7 +21,7 @@ data:
   filter_overlong_prompts: false
 
 actor_rollout_ref:
-  num_workers: ${oc.decode:${oc.env:WORLD_SIZE, 8}}
+  num_workers: 4  # N_GPUS
   model_sharing: true
   load_on_worker: false
   model:
@@ -57,7 +57,7 @@ actor_rollout_ref:
   rollout:
     name: vllm
     n: 4
-    gpu_memory_utilization: 0.7
+    gpu_memory_utilization: 0.6
     tensor_model_parallel_size: 1
     log_prob_micro_batch_size_per_gpu: 1
     dtype: bfloat16
@@ -65,13 +65,13 @@ actor_rollout_ref:
 trainer:
   project_name: hardtry
   experiment_name: verl2
-  n_gpus_per_node: ${oc.decode:${oc.env:WORLD_SIZE, 8}}
+  n_gpus_per_node: 4  # N_GPUS
   nnodes: 1
   logger: ['console', 'swanlab']
-  default_local_dir: checkpoints/verl2
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl2
   critic_warmup: 0.01
-  save_freq: 10
-  test_freq: 10
+  save_freq: 50
+  test_freq: 50
   val_before_train: true
   total_epochs: 1
   resume_mode: auto
@@ -83,17 +83,16 @@ custom_reward_function:
 ray_init_kwargs:
   runtime_env:
     env_vars:
-      # VLLM_LORA_ADAPTER_SIZE: "16"
-      RAY_memory_usage_threshold: 0.98
-      RAY_memory_monitor_refresh_ms: 2000
-      TOKENIZERS_PARALLELISM: "true"
+      RAY_memory_usage_threshold: 0.85
+      RAY_memory_monitor_refresh_ms: 5000
+      TOKENIZERS_PARALLELISM: "false"
       NCCL_DEBUG: "WARN"
-      VLLM_LOGGING_LEVEL: "WARN"
+      VLLM_LOGGING_LEVEL: "ERROR"
       VLLM_ALLOW_RUNTIME_LORA_UPDATING: "true"
       VLLM_ALLREDUCE_USE_SYMM_MEM: "0"
-      CUDA_DEVICE_MAX_CONNECTIONS: "1"
-      NCCL_CUMEM_ENABLE: "0"
-  working_dir: null
+      CUDA_DEVICE_MAX_CONNECTIONS: "8"
+      NCCL_CUMEM_ENABLE: "1"
+  working_dir: /dfs/data/work/hardtry
 
 hydra:
   searchpath:
