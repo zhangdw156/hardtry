@@ -93,4 +93,4 @@ ray_init_kwargs:
 
 hydra:
   searchpath:
-    - file:///dfs/data/work/verl/verl/trainer/config/
+    - pkg://verl/trainer/config/
