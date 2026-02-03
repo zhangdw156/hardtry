@@ -27,3 +27,26 @@ include = [
     "README.md",
     "pyproject.toml",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.14",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+exclude = [
+    ".venv",
+    "venv",
+    "dist",
+    "build",
+    "__pycache__",
+    ".git",
+    ".github",
+    "**/*.ipynb",
+]
+extend-include = ["*.py"]
+lint.select = ["E", "F", "W", "UP", "I"]
+lint.ignore = ["E203", "E501"]
+lint.fixable = ["ALL"]
