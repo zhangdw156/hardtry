@@ -1,0 +1,24 @@
+defaults:
+  - ppo_trainer
+  - verl_common_config
+  - _self_
+
+actor_rollout_ref:
+  model:
+    path: /dfs/data/models/Qwen3-0.6B
+    lora_rank: 16
+    lora_alpha: 32
+    target_modules: all-linear
+
+trainer:
+  experiment_name: verl_demo
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl_demo
+
+custom_reward_function:
+  path: /dfs/data/work/hardtry/exps/verl_demo/reward_fn.py
+  name: compute_score
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file:///dfs/data/work/hardtry/exps/verl1/configs/
