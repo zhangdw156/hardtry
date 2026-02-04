@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 from datasets import load_dataset
 from transformers import HfArgumentParser
+import re
 
 
 @dataclass
@@ -139,6 +140,14 @@ def convert_tool_content(example):
         content = ""
         for tool_call in tool_calls:
             for value in tool_call.values():
+                # TODO: 修改了对于函数调用错误的处理
+                # 需要当前几组实验跑完之后重新构造数据再进行实验
+                # 不过就目前结果而看，应该影响不大，所以暂时先不调用
+                if isinstance(value,str):
+                    pattern = r"^Function call .* failed\..*?Error:\s+(.*?)\s+Stack trace:"
+                    match = re.search(pattern, value, re.DOTALL)
+                    if match:
+                        value = {"error": match.group(1)}
                 content += f"<tool_response>\n{value}\n</tool_response>\n"
         return {"role": "user", "content": content.strip()}
     except Exception:
