@@ -1,5 +1,6 @@
 defaults:
-  - grpo_config
+  - ppo_trainer
+  - verl_common_config
   - _self_
 
 actor_rollout_ref:
@@ -14,4 +15,5 @@ trainer:
 
 hydra:
   searchpath:
+    - pkg://verl/trainer/config/
     - file:///dfs/data/work/hardtry/exps/verl1/configs/
