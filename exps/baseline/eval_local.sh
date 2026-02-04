@@ -11,7 +11,7 @@ fi
 # 配置部分
 VLLM_CONFIG="configs/vllm_config4.yaml"
 EVAL_CONFIG="configs/eval_config5.yaml"
-VLLM_LOG="vllm_server.log"
+VLLM_LOG="logs/vllm_server.log"
 PORT=8000 # 根据你的 yaml 配置 port: 8000
 
 echo "======================================================="
@@ -83,7 +83,7 @@ echo "======================================================="
 echo "🧪 Starting Evaluation Runner..."
 echo "======================================================="
 
-uv run -m hardtry.eval_runner "$EVAL_CONFIG"
+uv run -m hardtry.utils.eval_runner "$EVAL_CONFIG"
 
 # 脚本运行到这里会自动触发 trap cleanup，杀死 vLLM
 exit 0
