@@ -7,9 +7,7 @@
     "reduce_scatter": true,
     "reduce_bucket_size": 2e8,
     "contiguous_gradients": true,
-    "cpu_offload": {
-      "enabled": true
-    }
+    "cpu_offload": true
   },
   "gradient_accumulation_steps": "auto",
   "train_micro_batch_size_per_gpu": "auto",
