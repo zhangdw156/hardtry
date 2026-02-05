@@ -3,9 +3,13 @@
 source /dfs/data/uv-venv/huggingface/bin/activate
 
 BASE_MODEL_PATH="/dfs/data/models/Qwen3-4B-Instruct-2507"
+##############################
 # TODO: To be modified
+##############################
 CKPT_PATH="/dfs/data/work/hardtry/checkpoints/full1/v6-20260204-133724/checkpoint-162/pytorch_model_fsdp_0"
+##############################
 # TODO: To be modified
+##############################
 OUTPUT_PATH="/dfs/data/models/hardtry-4b-full1"
 
 accelerate merge-weights \

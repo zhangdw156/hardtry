@@ -1,8 +1,12 @@
 #!/bin/bash
 
+##############################
 # TODO: To be modified
+##############################
 LOCAL_DIR="/dfs/data/work/hardtry/checkpoints/verl1/global_step_221/actor"
+##############################
 # TODO: To be modified
+##############################
 TARGET_DIR="/dfs/data/models/hardtry-4b-verl1"
 
 /dfs/data/uv-venv/verl/bin/python3 -m verl.model_merger merge \
