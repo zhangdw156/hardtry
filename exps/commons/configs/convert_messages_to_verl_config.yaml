@@ -1,5 +1,5 @@
 input_path: "/dfs/data/work/hardtry/data/openai_messages_fc.json"
-output_dir: "/dfs/data/work/hardtry/data2"
+output_dir: "/dfs/data/work/hardtry/data"
 model_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
 test_size: 0.05
 seed: 42
