@@ -1,0 +1,3 @@
+input: "/dfs/data/work/hardtry/data/bfcl_multi_turn.json"
+output: "/dfs/data/work/hardtry/data/openai_messages_fc.json"
+max_samples: -1
