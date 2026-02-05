@@ -4,11 +4,11 @@ test_category: "multi_turn_base"
 
 # 实验过程文件存放的根目录
 base_artifact_dir: "/dfs/data/work/hardtry/eval_results"
-# TODO: 需要修改
+# TODO: To be modified
 experiment_name: "baseline_parallel_5runs"
 
 # 结果汇总 CSV 存放的绝对路径
-# TODO: 需要修改
+# TODO: To be modified
 summary_output_dir: "/dfs/data/work/hardtry/exps/baseline/eval5_results"
 
 # 环境配置
