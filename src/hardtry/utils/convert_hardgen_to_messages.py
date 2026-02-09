@@ -102,6 +102,7 @@ def convert_system_content(example):
             if isinstance(tools_obj, dict):
                 tools_obj = [tools_obj]
 
+            # TODO: 这里的tools_header和tools_footer都是错的，或许是导致实验失败的原因！
             tools_header = "\n\n# Tools\nYou may call one or more functions... <tools>"
             tools_json_body = "".join(
                 ["\n" + json.dumps(t, ensure_ascii=False) for t in tools_obj]
