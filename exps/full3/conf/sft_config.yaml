@@ -10,7 +10,7 @@ dataset:
   - "/dfs/data/work/hardtry/data/gem/gem_openai_messages_fc.json"
 max_length: 10240
 split_dataset_ratio: 0.05
-overlong_filter: true
+# overlong_filter: true
 
 # 显存优化
 attn_impl: "flash_attention_2"
