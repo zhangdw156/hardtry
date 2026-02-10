@@ -50,12 +50,12 @@ logging_steps: 10
 eval_strategy: "steps"
 save_strategy: "steps"
 eval_on_start: true
-output_dir: "/dfs/data/work/hardtry/checkpoints/full3"
+output_dir: "/dfs/data/work/hardtry/checkpoints/full4"
 seed: 42
 
 # SwanLab
 report_to: "swanlab"
 swanlab_project: "hardtry"
-swanlab_exp_name: "full3"
+swanlab_exp_name: "full4"
 
 fsdp: "fsdp2"
