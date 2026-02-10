@@ -1,0 +1,13 @@
+defaults:
+  - ppo_trainer
+  - verl_common_config
+  - _self_
+
+trainer:
+  experiment_name: verl4
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl4
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file:///dfs/data/work/hardtry/exps/verl4/conf/
