@@ -17,7 +17,7 @@ data:
   filter_overlong_prompts: true
 
 actor_rollout_ref:
-  num_workers: 4  # N_GPUS
+  num_workers: 2  # N_GPUS
   model_sharing: true
   load_on_worker: false
   model:
@@ -57,7 +57,7 @@ actor_rollout_ref:
 
 trainer:
   project_name: hardtry
-  n_gpus_per_node: 4  # N_GPUS
+  n_gpus_per_node: 2  # N_GPUS
   nnodes: 1
   logger: ['console', 'swanlab']
   critic_warmup: 0.01
