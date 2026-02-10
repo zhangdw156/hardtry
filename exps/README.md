@@ -4,6 +4,14 @@
 
 目前看来，全量rl有效果且效果不错
 
+### 26-02-10
+
+lora1，lora2，verl1，verl2，full1，full2的实验似乎都有问题，因为构造的openai格式的messages数据集，工具调用相关的系统提示词没有和qwen3一模一样
+
+新增verl3和full3，使用复现美团的文章合成的五千多条数据进行实验
+
+新增verl4和full4，使用修复好的代码，重新进行实验
+
 ### lora1(似乎没有效果)
 
 > ms-swift
