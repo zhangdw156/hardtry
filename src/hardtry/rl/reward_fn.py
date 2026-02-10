@@ -46,6 +46,8 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
     format_reward = 0.0
     correctness_reward = 0.0
 
+    predict_str = solution_str
+    
     has_tool = "<tool_call>" in predict_str and "</tool_call>" in predict_str
 
     if has_tool:
