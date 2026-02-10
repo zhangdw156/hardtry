@@ -1,0 +1,8 @@
+input_path: "/dfs/data/work/hardtry/data/gem/gem_openai_messages_fc.json"
+output_dir: "/dfs/data/work/hardtry/data/gem"
+model_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
+test_size: 0.05
+seed: 42
+num_proc: 8
+data_source: "sloop"
+ability: "function_call"
