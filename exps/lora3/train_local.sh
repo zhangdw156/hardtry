@@ -6,4 +6,4 @@ OMP_NUM_THREADS=4 \
 NPROC_PER_NODE=4 \
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
     swift sft --config \
-        "/dfs/data/work/hardtry/exps/lora3/conf/sft_config.yaml"
+        "/dfs/data/work/hardtry/exps/lora3/configs/sft_config.yaml"
