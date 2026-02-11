@@ -1,0 +1,17 @@
+# 集中实验入口示例（单次运行一个任务配置）
+# 用法: uv run python -m hardtry.run config_file=exps/commons/configs/run_example.yaml
+
+tasks:
+  - type: module
+    module: hardtry.utils.convert_hardgen_to_messages
+    config: exps/commons/configs/convert_hardgen_to_messages_config.yaml
+  - type: module
+    module: hardtry.utils.convert_messages_to_verl
+    config: exps/commons/configs/convert_messages_to_verl_config.yaml
+  # - type: command
+  #   command: ["bash", "exps/full1/train_local.sh"]
+  # - type: command
+  #   command: ["bash", "exps/full1/merge_local.sh"]
+  # - type: module
+  #   module: hardtry.utils.eval_runner
+  #   config: exps/full1/configs/eval_config5.yaml
