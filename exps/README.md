@@ -12,6 +12,8 @@ lora1，lora2，verl1，verl2，full1，full2的实验似乎都有问题，因�
 
 新增verl4和full4，使用修复好的代码，重新进行实验
 
+发现full4实验有效，新增lora3实验
+
 ### lora1(似乎没有效果)
 
 > ms-swift
@@ -107,3 +109,33 @@ lora1，lora2，verl1，verl2，full1，full2的实验似乎都有问题，因�
 - 26.5%
 - 27.5%
 - 27.5%
+
+### full4
+
+> ms-swift
+
+> all response -> loss
+
+实验结果
+
+- 47.00%
+- 47.50%
+- 47.50%
+- 47.00%
+- 47.50%
+
+### full3
+
+> ms-swift
+
+> all response -> loss
+
+> gem合成的5k数据
+
+实验结果
+
+- 13.00%
+- 12.50%
+- 13.00%
+- 13.00%
+- 12.00%
