@@ -3,7 +3,7 @@ model: "/dfs/data/models/Qwen3-4B-Instruct-2507"
 loss_scale: "default"  # 全部回复计算loss
 model_type: "qwen3"
 template: "qwen3_nothinking"
-train_type: "full"
+train_type: "lora"
 
 # 数据设置
 dataset:
@@ -36,7 +36,7 @@ gradient_accumulation_steps: 4
 max_grad_norm: 1.0
 weight_decay: 0.01
 
-LoRA
+# LoRA
 lora_rank: 32
 lora_alpha: 64
 lora_dropout: 0.01
