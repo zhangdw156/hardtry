@@ -38,4 +38,4 @@ max_lora_rank: 128
 # TODO: To be modified
 ##############################
 lora_modules:
-  - "lora3=/dfs/data/models/hardtry-4b-lora3"
+  - "lora3=/dfs/data/work/hardtry/checkpoints/lora3/v0-20260212-014718/checkpoint-162"
