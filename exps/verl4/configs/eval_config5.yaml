@@ -1,0 +1,28 @@
+# 核心模型与测试集
+model_name: "Qwen/Qwen3-4B-FC"
+test_category: "multi_turn_base"
+
+# 实验过程文件存放的根目录
+base_artifact_dir: "/dfs/data/work/hardtry/eval_results"
+##############################
+# TODO: To be modified
+##############################
+experiment_name: "verl4_parallel_5runs"
+
+# 结果汇总 CSV 存放的绝对路径
+##############################
+# TODO: To be modified
+##############################
+summary_output_dir: "/dfs/data/work/hardtry/exps/verl4/eval5_results"
+
+# 环境配置
+venv_activate_path: "/dfs/data/uv-venv/gorilla/bin/activate"
+remote_openai_tokenizer_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
+
+# 并行参数
+num_runs: 5
+threads_per_run: 32
+
+# OpenAI 兼容服务配置
+remote_openai_base_url: "http://localhost:8000/v1"
+remote_openai_api_key: "EMPTY"

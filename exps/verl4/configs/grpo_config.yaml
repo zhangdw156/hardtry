@@ -10,4 +10,4 @@ trainer:
 hydra:
   searchpath:
     - pkg://verl/trainer/config/
-    - file:///dfs/data/work/hardtry/exps/verl4/conf/
+    - file:///dfs/data/work/hardtry/exps/verl4/configs/
