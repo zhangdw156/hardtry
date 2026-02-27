@@ -1,5 +1,6 @@
 # 集中实验入口示例（单次运行一个任务配置）
 # 用法: uv run python -m hardtry.run config_file=exps/commons/configs/run_example.yaml
+# 约定: 所有实验的配置文件统一放在各实验目录下的 configs/ 中。
 
 tasks:
   - type: module

@@ -13,7 +13,7 @@ try:
 except ImportError:
     hydra = None
 
-_CONF_DIR = Path(__file__).resolve().parent / "conf"
+_CONFIG_DIR = Path(__file__).resolve().parent / "configs"
 
 
 def _ensure_config_file_in_argv():
@@ -130,7 +130,7 @@ def run(cfg):
     print(f"\n保存完成！\n训练集: {train_path}\n测试集: {test_path}")
 
 
-_config_path = str(_CONF_DIR.resolve())
+_config_path = str(_CONFIG_DIR.resolve())
 
 if hydra is not None:
 
@@ -149,6 +149,6 @@ else:
 
 if __name__ == "__main__":
     _ensure_config_file_in_argv()
-    if not os.path.isdir(_CONF_DIR):
-        raise FileNotFoundError(f"默认配置目录不存在: {_CONF_DIR}")
+    if not os.path.isdir(_CONFIG_DIR):
+        raise FileNotFoundError(f"默认配置目录不存在: {_CONFIG_DIR}")
     main()
