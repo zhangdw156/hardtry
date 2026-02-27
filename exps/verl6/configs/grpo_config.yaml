@@ -4,10 +4,10 @@ defaults:
   - _self_
 
 trainer:
-  experiment_name: verl5
-  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl5
+  experiment_name: verl6
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl6
 
 hydra:
   searchpath:
     - pkg://verl/trainer/config/
-    - file:///dfs/data/work/hardtry/exps/verl5/conf/
+    - file:///dfs/data/work/hardtry/exps/verl6/configs/

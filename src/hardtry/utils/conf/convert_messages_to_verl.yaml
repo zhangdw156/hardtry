@@ -1,0 +1,22 @@
+# convert_messages_to_verl 默认配置（Hydra 格式）
+# 用法:
+#   指定配置文件: config_file=exps/commons/configs/convert_messages_to_verl_config.yaml
+#   覆盖参数:     config_file=... max_samples=100
+#   或由 run.py 传入单个 yaml 路径（脚本会转为 config_file=...）
+
+config_file: null
+
+# 必填项（可在 config_file 对应 yaml 中填写，或通过 CLI 覆盖）
+input_path: ""
+output_dir: ""
+model_path: ""
+
+# 可选
+test_size: 0.05
+seed: 42
+num_proc: 8
+data_source: "sloop"
+ability: "function_call"
+
+# 保留多少条数据：null 表示全部保留；设为正整数则只保留前 N 条再划分 train/test
+max_samples: null

@@ -1,8 +1,11 @@
-input_path: "/dfs/data/work/hardtry/data/gem_filtered/gem_openai_messages_fc_filtered.json"
-output_dir: "/dfs/data/work/hardtry/data/gem_filtered"
+# verl6: looptool 1k，先转 parquet 再训练
+input_path: "/dfs/data/work/hardtry/data/looptool/looptool_openai_messages_fc.jsonl"
+output_dir: "/dfs/data/work/hardtry/data/looptool"
 model_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
 test_size: 0.05
 seed: 42
 num_proc: 8
-data_source: "sloop"
+data_source: "looptool"
 ability: "function_call"
+# 只保留 1k 条
+max_samples: 1000

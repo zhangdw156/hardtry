@@ -5,9 +5,10 @@ algorithm:
     type: fixed
     kl_coef: 0.001
 
+# verl6: looptool 1k（需先跑 convert_messages_to_verl 生成 train/test.parquet）
 data:
-  train_files: /dfs/data/work/hardtry/data/gem_filtered/train.parquet
-  val_files: /dfs/data/work/hardtry/data/gem_filtered/test.parquet
+  train_files: /dfs/data/work/hardtry/data/looptool/train.parquet
+  val_files: /dfs/data/work/hardtry/data/looptool/test.parquet
   train_batch_size: 64
   val_batch_size: 64
   max_prompt_length: 9216

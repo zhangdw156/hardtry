@@ -1,22 +1,25 @@
 import os
 import sys
-from dataclasses import dataclass, field
+from pathlib import Path
 
 from datasets import load_dataset
+from omegaconf import OmegaConf
 from tqdm import tqdm
-from transformers import AutoTokenizer, HfArgumentParser
+from transformers import AutoTokenizer
+
+# Hydra 仅用于入口装饰，config 用 OmegaConf 合并
+try:
+    import hydra
+except ImportError:
+    hydra = None
+
+_CONF_DIR = Path(__file__).resolve().parent / "conf"
 
 
-@dataclass
-class DataArguments:
-    input_path: str = field(metadata={"help": "原始 OpenAI 格式 JSON 路径"})
-    output_dir: str = field(metadata={"help": "输出 parquet 文件的目录"})
-    model_path: str = field(metadata={"help": "用于统计长度的 Tokenizer 路径"})
-    test_size: float = field(default=0.05, metadata={"help": "验证集比例"})
-    seed: int = field(default=42, metadata={"help": "随机种子"})
-    num_proc: int = field(default=8, metadata={"help": "并行进程数"})
-    data_source: str = field(default="sloop", metadata={"help": "数据来源标识"})
-    ability: str = field(default="function_call", metadata={"help": "能力类型标签"})
+def _ensure_config_file_in_argv():
+    """兼容 run.py 传入的单个 yaml 路径：转为 config_file=path，便于 Hydra 解析。"""
+    if len(sys.argv) == 2 and sys.argv[1].endswith((".yaml", ".yml")) and "=" not in sys.argv[1]:
+        sys.argv[1] = f"config_file={sys.argv[1]}"
 
 
 def make_map_fn(split, data_source, ability):
@@ -56,36 +59,57 @@ def get_stats(dataset, tokenizer):
     return max_prompt_len, max_gt_len
 
 
-def main():
-    parser = HfArgumentParser(DataArguments)
-    if len(sys.argv) == 2 and sys.argv[1].endswith(".yaml"):
-        # 如果只传了一个 yaml 文件路径
-        script_args = parser.parse_yaml_file(yaml_file=sys.argv[1])[0]
-    else:
-        # 否则按常规命令行参数解析
-        script_args = parser.parse_args_into_dataclasses()[0]
+def run(cfg):
+    """实际执行逻辑，接收 OmegaConf 配置。"""
+    # 若指定了 config_file，则合并其内容（config_file 自身字段不覆盖已有 CLI 覆盖）
+    if cfg.get("config_file"):
+        user = OmegaConf.load(cfg.config_file)
+        # 合并：cfg 为底，user 覆盖，避免 config_file 路径写回
+        merged = OmegaConf.merge(cfg, user)
+        merged.config_file = cfg.get("config_file")
+        cfg = merged
 
-    print(f"开始加载数据集: {script_args.input_path}")
-    ds = load_dataset("json", data_files=script_args.input_path, split="train")
+    OmegaConf.resolve(cfg)
+    input_path = cfg.get("input_path") or ""
+    output_dir = cfg.get("output_dir") or ""
+    model_path = cfg.get("model_path") or ""
+    if not input_path or not output_dir or not model_path:
+        raise ValueError(
+            "请在配置文件或命令行中指定 input_path、output_dir、model_path。"
+        )
+
+    test_size = cfg.get("test_size", 0.05)
+    seed = cfg.get("seed", 42)
+    num_proc = cfg.get("num_proc", 8)
+    data_source = cfg.get("data_source", "sloop")
+    ability = cfg.get("ability", "function_call")
+    max_samples = cfg.get("max_samples")
+
+    print(f"开始加载数据集: {input_path}")
+    ds = load_dataset("json", data_files=input_path, split="train")
+
+    # 保留条数限制
+    if max_samples is not None and max_samples > 0:
+        n = min(int(max_samples), len(ds))
+        ds = ds.select(range(n))
+        print(f"已限制为前 {n} 条数据（max_samples={max_samples}）")
 
     # 1. 划分数据集
-    split_ds = ds.train_test_split(
-        test_size=script_args.test_size, seed=script_args.seed
-    )
+    split_ds = ds.train_test_split(test_size=test_size, seed=seed)
 
     # 2. 转换格式
     processed_datasets = {}
     for key in ["train", "test"]:
         print(f"正在处理 {key} 分片...")
         processed_datasets[key] = split_ds[key].map(
-            make_map_fn(key, script_args.data_source, script_args.ability),
+            make_map_fn(key, data_source, ability),
             with_indices=True,
-            num_proc=script_args.num_proc,
+            num_proc=num_proc,
         )
 
     # 3. 统计并打印信息
     print("\n加载 Tokenizer 进行统计...")
-    tokenizer = AutoTokenizer.from_pretrained(script_args.model_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     for key in ["train", "test"]:
         p_max, g_max = get_stats(processed_datasets[key], tokenizer)
@@ -97,14 +121,34 @@ def main():
         print("=" * 40)
 
     # 4. 保存文件
-    os.makedirs(script_args.output_dir, exist_ok=True)
-    train_path = os.path.join(script_args.output_dir, "train.parquet")
-    test_path = os.path.join(script_args.output_dir, "test.parquet")
+    os.makedirs(output_dir, exist_ok=True)
+    train_path = os.path.join(output_dir, "train.parquet")
+    test_path = os.path.join(output_dir, "test.parquet")
 
     processed_datasets["train"].to_parquet(train_path)
     processed_datasets["test"].to_parquet(test_path)
     print(f"\n保存完成！\n训练集: {train_path}\n测试集: {test_path}")
 
 
+_config_path = str(_CONF_DIR.resolve())
+
+if hydra is not None:
+
+    @hydra.main(
+        config_path=_config_path,
+        config_name="convert_messages_to_verl",
+        version_base="1.3",
+    )
+    def main(cfg):
+        run(cfg)
+else:
+
+    def main(_cfg=None):
+        raise ImportError("请安装 hydra-core 以使用 Hydra 配置：pip install hydra-core")
+
+
 if __name__ == "__main__":
+    _ensure_config_file_in_argv()
+    if not os.path.isdir(_CONF_DIR):
+        raise FileNotFoundError(f"默认配置目录不存在: {_CONF_DIR}")
     main()
