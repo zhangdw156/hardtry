@@ -21,6 +21,27 @@ _run_cfg_dir = Path(tempfile.mkdtemp(prefix="hardtry_hydra_"))
 (_run_cfg_dir / "run.yaml").write_text("config_file: null\n", encoding="utf-8")
 
 
+def _task_cwd_for_command(cmd: list, base_cwd: Path) -> Path:
+    """若 command 为 bash exps/.../scripts/xxx.sh，则用该实验目录作为 cwd，与在实验目录下直接 bash scripts/xxx.sh 行为一致。"""
+    if len(cmd) < 2 or cmd[0] not in ("bash", "sh"):
+        return base_cwd
+    script_path = Path(cmd[1])
+    if not script_path.suffix.endswith("sh"):
+        return base_cwd
+    try:
+        resolved = (base_cwd / script_path).resolve()
+    except (OSError, RuntimeError):
+        return base_cwd
+    parts = resolved.parts
+    if "exps" not in parts or "scripts" not in parts:
+        return base_cwd
+    scripts_idx = parts.index("scripts")
+    if scripts_idx < 1:
+        return base_cwd
+    exp_dir = Path(*parts[:scripts_idx])
+    return exp_dir if exp_dir.is_dir() else base_cwd
+
+
 def _run_tasks(tasks: list, cwd: Path) -> int:
     """串行执行 tasks，返回退出码。"""
     for i, task in enumerate(tasks):
@@ -36,6 +57,7 @@ def _run_tasks(tasks: list, cwd: Path) -> int:
             if config:
                 cmd.append(str(config))
             print(f"任务 {i + 1}/{len(tasks)}: uv run python -m {module} ...")
+            task_cwd = cwd
         elif kind == "command":
             command = task.get("command")
             if not command:
@@ -45,11 +67,12 @@ def _run_tasks(tasks: list, cwd: Path) -> int:
                 command = [command]
             cmd = command
             print(f"任务 {i + 1}/{len(tasks)}: {' '.join(str(c) for c in cmd)}")
+            task_cwd = _task_cwd_for_command(cmd, cwd)
         else:
             print(f"任务 {i + 1}: 未知类型 {kind}，已跳过")
             continue
 
-        ret = subprocess.run(cmd, cwd=cwd)
+        ret = subprocess.run(cmd, cwd=task_cwd)
         if ret.returncode != 0:
             print(f"任务 {i + 1} 失败，退出码 {ret.returncode}")
             return ret.returncode
