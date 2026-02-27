@@ -10,5 +10,4 @@
    - **eval_config5.yaml**：`experiment_name`、`summary_output_dir` 等按实验名修改。
 2. **scripts/merge_swift_fsdp_local.sh**：将 `CKPT_PATH` 改为你本次训练产生的 checkpoint 路径（如 `.../checkpoints/<实验名>/v0-YYYYMMDD-HHMMSS/checkpoint-N/pytorch_model_fsdp_0`）。`OUTPUT_PATH` 已按实验名生成。
 
-入口：在仓库根目录执行 `bash exps/<实验名>/run_local.sh`，或  
-`uv run python -m hardtry.run config_file=exps/<实验名>/configs/run_<实验名>.yaml`。
+入口：`bash exps/<实验名>/run_local.sh`（可从任意目录执行）。

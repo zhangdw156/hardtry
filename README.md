@@ -1,17 +1,15 @@
-### 集中实验入口（Hydra）
+### 实验一条龙
 
-通过 Hydra 指定任务配置文件；多个配置用 Hydra 的 `-m` 多跑（多次运行，每次一个配置）。
+各实验由 **run_local.sh** 统筹，按顺序执行 `scripts/` 下各步骤脚本。
 
 ```bash
-# 单个任务配置
-uv run python -m hardtry.run config_file=exps/commons/configs/run_example.yaml
-
-# 多个任务配置：Hydra -m 会按顺序多次运行，每次一个 config_file
-uv run python -m hardtry.run -m config_file=exps/a.yaml,exps/b.yaml,exps/c.yaml
+# 在实验目录下执行（或 bash exps/verl6/run_local.sh）
+cd exps/verl6 && bash run_local.sh
 ```
 
-每个配置文件只需包含 `tasks: [...]`（module = uv run python -m，command = bash 等）。示例见 `exps/commons/configs/run_example.yaml`。  
-约定：实验相关配置统一放在各实验目录的 `configs/` 下。
+约定：配置在 `configs/`，步骤脚本在 `scripts/`，一个 sh 对应一个步骤，各脚本可从任意目录执行。
+
+commons 示例（两段数据转换）：`bash exps/commons/run_example.sh`
 
 ---
 

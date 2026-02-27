@@ -1,9 +1,10 @@
 #!/bin/bash
-# 从 scripts/ 运行时，实验目录为脚本所在目录的上级。
+# 步骤：GRPO 训练。可从任意目录执行（仅依赖脚本自身路径，执行前会 cd 到实验目录）。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 EXP_NAME="$(basename "$EXP_DIR")"
+cd "$EXP_DIR" || exit 1
 
 VERL_VENV="/dfs/data/uv-venv/verl"
 PYTHON_CMD="$VERL_VENV/bin/python3"

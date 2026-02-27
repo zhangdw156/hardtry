@@ -1,12 +1,35 @@
 #!/bin/bash
-# 唯一入口：从仓库根目录执行一条龙。配置在 configs/，步骤脚本在 scripts/。
-# 模板占位符 __EXP_NAME__ 会在 new_exp.sh 复制时被替换。
+# 唯一入口：在实验目录下按顺序执行各步骤脚本，不再使用 run.py。
+# 模板占位符 __EXP_NAME__ 由 new_exp.sh 替换。
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-cd "${SCRIPT_DIR}/../.." || exit 1
+set -e
+EXP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$EXP_DIR" || exit 1
 
 if [ -f "/dfs/data/sbin/setup.sh" ]; then
     source /dfs/data/sbin/setup.sh
 fi
 
-uv run python -m hardtry.run config_file=exps/__EXP_NAME__/configs/run___EXP_NAME__.yaml
+echo "=========================================="
+echo "步骤 1/4: convert_messages_to_verl"
+echo "=========================================="
+bash scripts/convert_messages_to_verl.sh
+
+echo "=========================================="
+echo "步骤 2/4: train (GRPO)"
+echo "=========================================="
+bash scripts/train_local.sh
+
+echo "=========================================="
+echo "步骤 3/4: merge"
+echo "=========================================="
+bash scripts/merge_verl_fsdp_local.sh
+
+echo "=========================================="
+echo "步骤 4/4: eval"
+echo "=========================================="
+bash scripts/eval_local.sh
+
+echo "=========================================="
+echo "全部完成"
+echo "=========================================="

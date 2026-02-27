@@ -2,7 +2,7 @@
 # 用法:
 #   指定配置文件: config_file=exps/commons/configs/convert_messages_to_verl_config.yaml
 #   覆盖参数:     config_file=... max_samples=100
-#   或由 run.py 传入单个 yaml 路径（脚本会转为 config_file=...）
+#   或直接传入单个 yaml 路径（脚本会转为 config_file=...）
 
 config_file: null
 

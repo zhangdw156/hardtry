@@ -8,7 +8,7 @@
 |------|------|
 | **bin/** | 稳定工具脚本，供各实验或根目录包装**直接调用**。接口保持稳定，便于维护。 |
 | **templates/** | 新建实验时**复制用**的模板，复制到 `exps/<实验名>` 后该实验目录自包含，不依赖 commons 后续改动。 |
-| **configs/** | commons 自用的配置与示例（如 `run_example.yaml`），也可作为复制参考。 |
+| **configs/** | commons 自用的配置（如 `convert_*_config.yaml`），也可作为复制参考。 |
 | 根目录 `eval_local.sh`、`merge_verl_fsdp_auto.sh` | **兼容包装**，仅转调 `bin/` 内同名脚本，保留旧用法。 |
 
 ## bin/ 稳定工具
@@ -42,3 +42,4 @@
 - 各实验的配置统一放在该实验目录下的 **configs/**。
 - 步骤脚本（train/merge/eval）建议放在该实验的 **scripts/**，其中可调用 `exps/commons/bin/` 下的工具。
 - 已完成的实验不依赖 commons 的后续修改；新实验可用 `new_exp.sh` 或从 templates 复制生成。
+- **run_example.sh**：依次执行两段 convert（hardgen→messages→verl），用法 `bash exps/commons/run_example.sh`。

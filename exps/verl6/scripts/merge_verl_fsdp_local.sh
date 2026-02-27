@@ -1,6 +1,5 @@
 #!/bin/bash
-# 使用「最后一次保存」的 checkpoint 自动 merge，可被 run 一条龙调用。
-# 实验目录为脚本所在目录的上级。
+# 步骤：使用「最后一次保存」的 checkpoint 自动 merge。可从任意目录执行（仅依赖脚本自身路径）。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # scripts 在 exps/verl6/scripts/，上三级才是仓库根

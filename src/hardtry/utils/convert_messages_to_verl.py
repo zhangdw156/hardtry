@@ -17,7 +17,7 @@ _CONFIG_DIR = Path(__file__).resolve().parent / "configs"
 
 
 def _ensure_config_file_in_argv():
-    """兼容 run.py 传入的单个 yaml 路径：转为 config_file=path，便于 Hydra 解析。"""
+    """兼容传入的单个 yaml 路径：转为 config_file=path，便于 Hydra 解析。"""
     if len(sys.argv) == 2 and sys.argv[1].endswith((".yaml", ".yml")) and "=" not in sys.argv[1]:
         sys.argv[1] = f"config_file={sys.argv[1]}"
 

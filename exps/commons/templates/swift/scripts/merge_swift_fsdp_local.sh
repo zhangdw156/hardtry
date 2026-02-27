@@ -1,5 +1,5 @@
 #!/bin/bash
-# Swift/FSDP checkpoint 合并为完整模型。复制后请将 CKPT_PATH 改为本次训练的 checkpoint 路径。
+# 步骤：Swift/FSDP checkpoint 合并为完整模型。可从任意目录执行（使用绝对路径）。复制后请将 CKPT_PATH 改为本次训练的 checkpoint 路径。
 
 source /dfs/data/uv-venv/huggingface/bin/activate
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 委托给 commons 的稳定工具，使用本实验的 configs。实验目录为脚本所在目录的上级。
+# 步骤：委托 commons 启动 vLLM 并跑评估。可从任意目录执行（仅依赖脚本自身路径）。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"

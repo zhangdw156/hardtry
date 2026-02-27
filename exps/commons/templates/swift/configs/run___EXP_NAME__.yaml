@@ -1,7 +1,5 @@
-# ms-swift 一条龙：train (SFT) → merge → eval
-# 用法: uv run python -m hardtry.run config_file=exps/__EXP_NAME__/configs/run___EXP_NAME__.yaml
-# 模板占位符 __EXP_NAME__ 会在 new_exp.sh 复制时被替换为实验名。
-# 若需先做数据转换，可在 tasks 开头添加 convert 步骤（参考 exps/commons/configs/run_example.yaml）。
+# 已废弃：一条龙改由 run_local.sh 按序执行 scripts/*.sh。本文件仅保留作步骤参考。
+# 步骤: train (SFT) → merge → eval
 
 tasks:
   - type: command

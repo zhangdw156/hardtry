@@ -16,9 +16,6 @@ dependencies = [
     "vllm>=0.15.0",
 ]
 
-[project.scripts]
-hardtry-run = "hardtry.run:main"
-
 [tool.hatch.version]
 path = "src/hardtry/__init__.py"
 

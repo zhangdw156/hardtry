@@ -1,5 +1,5 @@
 #!/bin/bash
-# 使用「最后一次保存」的 checkpoint 自动 merge。路径中的 __EXP_NAME__ 由 new_exp.sh 替换。
+# 步骤：使用「最后一次保存」的 checkpoint 自动 merge。可从任意目录执行（仅依赖脚本自身路径）。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # scripts 在 exps/<实验名>/scripts/，上三级才是仓库根
