@@ -11,7 +11,7 @@ port: 8000
 # 多卡并行与显存优化
 # =========================================================
 
-tensor_parallel_size: 4
+tensor_parallel_size: 1
 gpu_memory_utilization: 0.8
 
 # 增大最大并发序列数，应对 5 个实验同时发来的大量请求

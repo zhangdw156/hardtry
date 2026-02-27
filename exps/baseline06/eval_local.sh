@@ -10,7 +10,7 @@ fi
 
 # 配置部分
 mkdir -p logs
-VLLM_CONFIG="configs/vllm_config4.yaml"
+VLLM_CONFIG="configs/vllm_config.yaml"
 EVAL_CONFIG="configs/eval_config5.yaml"
 VLLM_LOG="logs/vllm_server.log"
 PORT=8000 # 根据你的 yaml 配置 port: 8000
