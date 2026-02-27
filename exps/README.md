@@ -48,6 +48,8 @@ full6，在hardgen 100上full sft，有效
 
 full7，在looptool 1k上full sft，几乎无效
 
+verl6，在looptool 1k上full rl，
+
 ## 实验结果
 
 ### lora1(似乎没有效果)
