@@ -76,6 +76,9 @@ custom_reward_function:
 ray_init_kwargs:
   runtime_env:
     env_vars:
+      # 确保 Ray worker 使用与 driver 相同的 verl 环境，避免 ModuleNotFoundError: No module named 'verl'
+      PATH: "/dfs/data/uv-venv/verl/bin:/usr/local/bin:/usr/bin:/bin"
+      VIRTUAL_ENV: "/dfs/data/uv-venv/verl"
       RAY_memory_usage_threshold: 0.85
       RAY_memory_monitor_refresh_ms: 5000
       TOKENIZERS_PARALLELISM: "false"

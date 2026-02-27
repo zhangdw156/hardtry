@@ -3,7 +3,8 @@
 # 实验目录为脚本所在目录的上级。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# scripts 在 exps/verl6/scripts/，上三级才是仓库根
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 CHECKPOINT_BASE="/dfs/data/work/hardtry/checkpoints/verl6"
 TARGET_DIR="/dfs/data/models/hardtry-4b-verl6"
