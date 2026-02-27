@@ -13,12 +13,12 @@ fi
 echo "=========================================="
 echo "步骤 1/4: convert_messages_to_verl"
 echo "=========================================="
-bash scripts/convert_messages_to_verl.sh
+# bash scripts/convert_messages_to_verl.sh
 
 echo "=========================================="
 echo "步骤 2/4: train (GRPO)"
 echo "=========================================="
-bash scripts/train_local.sh
+# bash scripts/train_local.sh
 
 echo "=========================================="
 echo "步骤 3/4: merge"

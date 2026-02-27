@@ -46,9 +46,9 @@ full5，在hardgen 1k上full sft，有效
 
 full6，在hardgen 100上full sft，有效
 
-full7，在looptool 1k上full sft，几乎无效
+full7，在looptool 1k上full sft，几乎无效，甚至可能下降
 
-verl6，在looptool 1k上full rl，
+verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
 ## 实验结果
 
@@ -297,3 +297,17 @@ verl6，在looptool 1k上full rl，
 - 25.50%
 - 27.50%
 - 26.00%
+
+### verl6
+
+> verl
+
+> looptool 1k
+
+实验结果
+
+- 28.50%
+- 27.00%
+- 28.00%
+- 27.50%
+- 26.50%
