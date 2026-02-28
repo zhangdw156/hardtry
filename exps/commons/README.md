@@ -8,10 +8,24 @@
 |------|------|
 | **bin/** | 稳定工具脚本，供各实验或根目录包装**直接调用**。接口保持稳定，便于维护。 |
 | **templates/** | 新建实验时**复制用**的模板，复制到 `exps/<实验名>` 后该实验目录自包含，不依赖 commons 后续改动。 |
-| **configs/** | commons 自用的配置（如 `convert_*_config.yaml`），也可作为复制参考。 |
+| **configs/** | commons 自用的配置（如 `convert_*_config.yaml`、`default_exp_resources.yaml`），也可作为复制参考。 |
 | 根目录 `eval_local.sh`、`merge_verl_fsdp_auto.sh` | **兼容包装**，仅转调 `bin/` 内同名脚本，保留旧用法。 |
 
+## 实验各步骤用卡数
+
+- **训练（verl）**：由该实验下的 `verl_common_config.yaml`（及若存在的 `verl_common_config_egpo.yaml`）中的 `actor_rollout_ref.num_workers`、`trainer.n_gpus_per_node`、`trainer.nnodes` 控制；脚本会固定 `nnodes: 1`，仅改前两者为「训练用卡数」。
+- **评估（vLLM）**：由该实验下的 vLLM 配置（`vllm_config4.yaml` 或 `vllm_config.yaml`）中的 `tensor_parallel_size` 控制。
+- 默认值（在未传参时使用）来自 **configs/default_exp_resources.yaml**（`train_n_gpus`、`eval_tensor_parallel_size`），可一次改齐所有实验的默认用卡再批量跑脚本。
+
 ## bin/ 稳定工具
+
+- **bin/set_exp_gpus.sh**  
+  用法：`bash exps/commons/bin/set_exp_gpus.sh <实验目录> [训练用卡数] [评估用卡数]`  
+  若省略后两个参数，从 `exps/commons/configs/default_exp_resources.yaml` 读取默认值。  
+  会改写该实验目录下 **configs/** 与 **conf/**（若存在）中的：  
+  - `verl_common_config.yaml`、`verl_common_config_egpo.yaml`：`num_workers`、`n_gpus_per_node`、`nnodes`（nnodes 固定为 1）；  
+  - `vllm_config4.yaml`、`vllm_config.yaml`：`tensor_parallel_size`。  
+  适用范围：verl 实验会同时改训练与评估；swift/full/lora 等仅有 vLLM 配置的会只改评估用卡。
 
 - **bin/eval_local.sh**  
   用法：`bash exps/commons/bin/eval_local.sh <实验目录>`  
