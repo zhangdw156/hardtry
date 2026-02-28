@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# 将指定实验目录下的训练/评估用卡数写入对应 YAML（verl_common_config*.yaml、vllm_config*.yaml）。
+# 将指定实验目录下的训练/评估用卡数写入对应配置与脚本。
+# Verl：verl_train_config、verl_common_config*.yaml（训练）、vllm_config*.yaml（评估）。
+# Swift：scripts/train_local.sh 中的 NPROC_PER_NODE、CUDA_VISIBLE_DEVICES（训练），vllm_config*.yaml（评估）。
 # 用法: set_exp_gpus.sh <实验目录> [训练用卡数] [评估用卡数]
 # 省略后两参时从 exps/commons/configs/global.yaml 读取。
 
@@ -33,7 +35,7 @@ _update_verl_in() {
     local dir="$EXP_DIR/$subdir"
     [[ -d "$dir" ]] || return 0
     local f
-    for f in verl_common_config.yaml verl_common_config_egpo.yaml; do
+    for f in verl_train_config.yaml verl_common_config.yaml verl_common_config_egpo.yaml; do
         [[ -f "$dir/$f" ]] || continue
         _sed_inplace "$dir/$f" -E "s/^(  num_workers: )[0-9]+([^0-9].*)?$/\1${TRAIN_GPUS}\2/"
         _sed_inplace "$dir/$f" -E "s/^(  n_gpus_per_node: )[0-9]+([^0-9].*)?$/\1${TRAIN_GPUS}\2/"
@@ -53,6 +55,22 @@ _update_vllm_in() {
     done
 }
 
+# 更新 Swift 实验 scripts/train_local.sh 中的 NPROC_PER_NODE、CUDA_VISIBLE_DEVICES
+_update_swift_train_sh() {
+    local sh_path="$EXP_DIR/scripts/train_local.sh"
+    [[ -f "$sh_path" ]] || return 0
+    grep -q 'NPROC_PER_NODE=' "$sh_path" || return 0
+    grep -q 'CUDA_VISIBLE_DEVICES=' "$sh_path" || return 0
+    local cuda_devs
+    if [[ "$TRAIN_GPUS" -gt 0 ]]; then
+        cuda_devs=$(seq -s, 0 $((TRAIN_GPUS - 1)))
+    else
+        cuda_devs="0"
+    fi
+    _sed_inplace "$sh_path" -E "s/^(NPROC_PER_NODE=)[0-9]+/\1${TRAIN_GPUS}/"
+    _sed_inplace "$sh_path" -E "s/^(CUDA_VISIBLE_DEVICES=)[0-9,]+/\1${cuda_devs}/"
+}
+
 # --- 参数与默认值 ---
 [[ -n "${1:-}" ]] || usage
 EXP_DIR="$(cd "$1" && pwd)"
@@ -64,7 +82,8 @@ for sub in configs conf; do
     _update_verl_in "$sub"
     _update_vllm_in "$sub"
 done
+_update_swift_train_sh
 
 echo "实验目录: $EXP_DIR"
 echo "训练用卡: $TRAIN_GPUS  评估用卡(tensor_parallel_size): $EVAL_GPUS"
-echo "已更新该实验下 configs/ 与 conf/ 中的 verl_common_config*.yaml 与 vllm_config*.yaml。"
+echo "已更新：verl 训练 YAML、vllm 评估 YAML；若存在 scripts/train_local.sh（含 NPROC_PER_NODE/CUDA_VISIBLE_DEVICES）则已按训练用卡数更新。"

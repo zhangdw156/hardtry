@@ -1,0 +1,15 @@
+# 入口配置：指定本实验 identity 与 searchpath，引入 verl_train_config（训练配置）。
+# new_exp.sh 会替换 __EXP_NAME__；searchpath 中的路径需与 global.yaml 一致（__WORK_ROOT__ 等）。
+defaults:
+  - ppo_trainer
+  - verl_train_config
+  - _self_
+
+trainer:
+  experiment_name: __EXP_NAME__
+  default_local_dir: __WORK_ROOT__/checkpoints/__EXP_NAME__
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file://__WORK_ROOT__/exps/__EXP_NAME__/configs/
