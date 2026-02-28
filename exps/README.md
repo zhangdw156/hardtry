@@ -60,14 +60,14 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 **verl7、verl8、full9 已完成**，实验结果与简要分析见下方「实验结果」及本节「26-02-28 分析」。verl9、full8 未完成，待跑。
 
-#### 26-02-28 分析
+#### 分析
 
 - **baseline 参考**：baseline（用于对照）multi turn base 约 26.5%～27.5%，均值约 27%；baseline_4bthinking（4B-Thinking 零样本）multi turn base 约 59%～63%。
 - **full9 与 baseline 对比**：full9（4B-Instruct + hardgen 1k 全量 SFT）5 轮 multi turn base 均值约 25.8%，略低于 baseline（约 27%），即当前与 RL 同数据、同导出的 SFT（Instruct）未超过零样本 baseline。
 - **full5 与 full9 对比（均为 hardgen 1k + 4B-Instruct 全量 SFT，训练参数几乎一致）**：full5 多轮 base 约 38.00%、38.50%、38.00%、37.00%、37.50%，均值约 **37.8%**，高于 baseline；full9 均值约 **25.8%**，低于 baseline。主要差异在**数据来源**：full5 使用 hardgen 原始 json 取 1000 条（`hardgen_openai_messages_fc.json#1000`）+ `split_dataset_ratio: 0.05` 做 train/val 划分；full9 使用与 verl7/verl8 同源的 convert 产出 parquet，再导出为 train.jsonl / test.jsonl。即同一「hardgen 1k」因数据划分与预处理流程（直接 json vs convert→parquet→jsonl）不同，可能导致训练集/评估分布不一致，从而结果差异大，值得后续对齐数据与复现。
 - **full6**：为 hardgen **100** 条数据 SFT（非 1k），5 轮 multi turn base 均值约 30.5%，高于 baseline；文档中若曾误标为 1k 已修正。
 - **GRPO vs EGPO（同数据、同奖励、同基座 Thinking）**：verl7（GRPO）5 轮 multi turn base 均值约 61.7%；verl8（EGPO）约 61.9%。两者水平接近，EGPO 略稳，未体现明显优势。
-- **RL vs SFT（同数据 hardgen 1k）**：verl7/verl8（RL + Thinking）约 62%；full9（SFT + Instruct）约 25.8%，远低于 RL。需待 full8（SFT + Thinking）完成后对比 SFT 在 Thinking 基座上的表现。
+- **RL vs SFT（同数据 hardgen 1k）**：verl7/verl8（RL + Thinking）约 62%。需待 full8（SFT + Thinking）完成后对比 SFT 在 Thinking 基座上的表现。
 
 ## 实验结果
 
@@ -185,11 +185,11 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 实验结果
 
-- 15.00%
-- 15.50%
-- 14.25%
-- 15.50%
-- 14.75%
+- 60.00%
+- 62.00%
+- 57.00%
+- 62.00%
+- 59.00%
 
 ### full4
 
@@ -285,7 +285,7 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 > ms-swift
 
-> hardgen **1k**（与 full9 同数据量级，数据来源不同：full5 用 json#1000，full9 用 parquet→jsonl）
+> hardgen 1k
 
 > all response -> loss
 
@@ -301,7 +301,7 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 > ms-swift
 
-> hardgen **100**（100 条数据，非 1k）
+> hardgen 100
 
 > all response -> loss
 
