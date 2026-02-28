@@ -1,15 +1,32 @@
-# verl7_demo：基于 verl7 的 GRPO，仅替换为「带打印的奖励函数」，用于验证：
-# 1) VeRL 流程可跑通  2) 奖励函数被正确加载并应用（见日志中的 [verl7_demo reward_fn]）
+# verl7_demo：单条数据、单轮，验证 VeRL 可跑通且奖励函数被正确加载并应用（日志不刷屏）
 defaults:
   - ppo_trainer
   - verl_common_config
   - _self_
 
+# 单条数据、单轮：1 样本 / 1 batch / 1 epoch = 1 step，reward 只调 1 次，日志可读
+data:
+  train_max_samples: 1
+  train_batch_size: 1
+  val_batch_size: 1
+
+actor_rollout_ref:
+  num_workers: 1
+  actor:
+    ppo_mini_batch_size: 1
+    ppo_micro_batch_size_per_gpu: 1
+  ref:
+    log_prob_micro_batch_size_per_gpu: 1
+  rollout:
+    n: 1
+
 trainer:
   experiment_name: verl7_demo
   default_local_dir: /dfs/data/work/hardtry/checkpoints/verl7_demo
+  n_gpus_per_node: 1
+  total_epochs: 1
 
-# 使用本实验目录下的 reward_fn.py（内含详细 print，便于验证加载与应用）
+# 使用本实验目录下的 reward_fn.py（单条单轮下只打 1 次完整打印）
 reward:
   custom_reward_function:
     path: /dfs/data/work/hardtry/exps/verl7_demo/reward_fn.py
