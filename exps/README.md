@@ -58,7 +58,16 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 新增 **full8**、**full9**（全量 SFT，hardgen 1k），与 RL 同数据：train.parquet→train.jsonl、test.parquet→test.jsonl 由 parquet_to_openai_messages 导出，SFT 中 dataset=train.jsonl、val_dataset=test.jsonl。full8 基座 Qwen3-4B-Thinking，full9 基座 Qwen3-4B-Instruct。见 exps/full8、exps/full9 的 README。
 
-以上 verl7、verl8、verl9、full8、full9 均未完成，待跑。
+**verl7、verl8、full9 已完成**，实验结果与简要分析见下方「实验结果」及本节「26-02-28 分析」。verl9、full8 未完成，待跑。
+
+#### 26-02-28 分析
+
+- **baseline 参考**：baseline（用于对照）multi turn base 约 26.5%～27.5%，均值约 27%；baseline_4bthinking（4B-Thinking 零样本）multi turn base 约 59%～63%。
+- **full9 与 baseline 对比**：full9（4B-Instruct + hardgen 1k 全量 SFT）5 轮 multi turn base 均值约 25.8%，略低于 baseline（约 27%），即当前与 RL 同数据、同导出的 SFT（Instruct）未超过零样本 baseline。
+- **full5 与 full9 对比（均为 hardgen 1k + 4B-Instruct 全量 SFT，训练参数几乎一致）**：full5 多轮 base 约 38.00%、38.50%、38.00%、37.00%、37.50%，均值约 **37.8%**，高于 baseline；full9 均值约 **25.8%**，低于 baseline。主要差异在**数据来源**：full5 使用 hardgen 原始 json 取 1000 条（`hardgen_openai_messages_fc.json#1000`）+ `split_dataset_ratio: 0.05` 做 train/val 划分；full9 使用与 verl7/verl8 同源的 convert 产出 parquet，再导出为 train.jsonl / test.jsonl。即同一「hardgen 1k」因数据划分与预处理流程（直接 json vs convert→parquet→jsonl）不同，可能导致训练集/评估分布不一致，从而结果差异大，值得后续对齐数据与复现。
+- **full6**：为 hardgen **100** 条数据 SFT（非 1k），5 轮 multi turn base 均值约 30.5%，高于 baseline；文档中若曾误标为 1k 已修正。
+- **GRPO vs EGPO（同数据、同奖励、同基座 Thinking）**：verl7（GRPO）5 轮 multi turn base 均值约 61.7%；verl8（EGPO）约 61.9%。两者水平接近，EGPO 略稳，未体现明显优势。
+- **RL vs SFT（同数据 hardgen 1k）**：verl7/verl8（RL + Thinking）约 62%；full9（SFT + Instruct）约 25.8%，远低于 RL。需待 full8（SFT + Thinking）完成后对比 SFT 在 Thinking 基座上的表现。
 
 ## 实验结果
 
@@ -276,14 +285,14 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 > ms-swift
 
-> hardgen 100
+> hardgen **1k**（与 full9 同数据量级，数据来源不同：full5 用 json#1000，full9 用 parquet→jsonl）
 
 > all response -> loss
 
-实验结果
+实验结果（multi turn base，5 轮）
 
 - 38.00%
-- 38.00%
+- 38.50%
 - 38.00%
 - 37.00%
 - 37.50%
@@ -292,15 +301,15 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 > ms-swift
 
-> hardgen 1k
+> hardgen **100**（100 条数据，非 1k）
 
 > all response -> loss
 
-实验结果
+实验结果（multi turn base，5 轮）
 
 - 30.00%
-- 30.00%
 - 31.00%
+- 30.50%
 - 30.50%
 - 30.50%
 
@@ -334,25 +343,33 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 - 27.50%
 - 26.50%
 
-### verl7（未完成）
+### verl7
 
 > verl
 
 > GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（reward_fn_egpo 严格二元）、同参；基座 Qwen3-4B-Thinking。数据：先 convert 一次，再 run_train_only.sh。见 exps/verl7/README.md。
 
-实验结果
+实验结果（multi turn base，5 轮）
 
-- （未完成，待跑）
+- 63.00%
+- 63.00%
+- 60.50%
+- 63.00%
+- 59.00%
 
-### verl8（未完成）
+### verl8
 
 > verl
 
 > EGPO，hardgen 1k，与 verl7 同数据、同奖励、同参，仅 adv_estimator 为 egpo；基座 Qwen3-4B-Thinking。见 exps/verl8/README.md。
 
-实验结果
+实验结果（multi turn base，5 轮）
 
-- （未完成，待跑）
+- 61.00%
+- 62.00%
+- 61.00%
+- 62.50%
+- 63.00%
 
 ### verl9（未完成）
 
@@ -374,12 +391,16 @@ verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模�
 
 - （未完成，待跑）
 
-### full9（未完成）
+### full9
 
 > ms-swift
 
 > 全量 SFT，hardgen 1k；与 RL 同数据（dataset=train.jsonl，val_dataset=test.jsonl）；基座 Qwen3-4B-Instruct，template qwen3_nothinking。见 exps/full9/README.md。
 
-实验结果
+实验结果（multi turn base，5 轮）
 
-- （未完成，待跑）
+- 26.50%
+- 25.50%
+- 25.50%
+- 25.50%
+- 26.00%
