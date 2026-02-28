@@ -7,4 +7,4 @@ EXP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 # scripts 在 exps/<实验名>/scripts/，上三级才是仓库根
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-exec bash "$REPO_ROOT/exps/commons/bin/eval_local.sh" "$EXP_DIR"
+exec bash "$REPO_ROOT/exps/commons/sbin/eval_local.sh" "$EXP_DIR"
