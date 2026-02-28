@@ -47,7 +47,7 @@
 - **用法**：`bash exps/commons/bin/set_exp_gpus.sh <实验目录> [训练用卡数] [评估用卡数]`
 - **示例**：`bash exps/commons/bin/set_exp_gpus.sh exps/verl7`（使用默认）、`bash exps/commons/bin/set_exp_gpus.sh exps/verl7 4 4`
 - 若省略后两个参数，从 **exps/commons/configs/global.yaml** 读取 `train_n_gpus`、`eval_tensor_parallel_size`。
-- 会改写该实验目录下 **configs/** 与 **conf/**（若存在）中的 `verl_common_config*.yaml`（num_workers、n_gpus_per_node）、`vllm_config*.yaml`（tensor_parallel_size）。
+- 会改写：**configs/** 与 **conf/** 下的 `verl_train_config.yaml`、`verl_common_config*.yaml`（训练卡数）、`vllm_config*.yaml`（评估 tensor_parallel_size）；若存在 **scripts/train_local.sh** 且含 `NPROC_PER_NODE`/`CUDA_VISIBLE_DEVICES`（Swift 实验），则一并按训练用卡数更新。
 
 ---
 
@@ -83,7 +83,7 @@
 
 ## templates/ 模板
 
-- **templates/verl/**：Verl（GRPO）实验骨架，configs 已内置（verl_config、verl_common_config、vllm、eval、convert 等）；占位符由 new_exp + global 替换，卡数由 set_exp_gpus.sh 管理。
+- **templates/verl/**：Verl（GRPO）实验骨架，configs 已内置（verl_config、verl_train_config、grpo_config、vllm、eval、convert 等）；依赖关系 grpo_config → verl_train_config → verl_config；占位符由 new_exp + global 替换，卡数由 set_exp_gpus.sh 管理。
 - **templates/swift/**：ms-swift SFT 实验骨架，configs 已内置，占位符同上。
 
 ## 约定

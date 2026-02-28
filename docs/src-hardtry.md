@@ -86,7 +86,7 @@ VeRL 训练时通过配置指定自定义 reward 模块，入口函数为 `compu
 - **用途**：严格 0/1，不校验 `<think>`。对整段 solution 做 `<tool_call>` 解析并与 ground_truth 比较，一致则 1.0，否则 0.0。适用于 Qwen3-4B-Instruct 等不输出思考块的模型（如 verl9）。
 - **入口**：`hardtry.rl.reward_fn_grpo.compute_score`（在实验配置中指定该模块）。
 
-在实验的 `verl_common_config.yaml`（或 `verl_common_config_egpo.yaml`）中通过 `reward_model` 的 `module` 或等效配置指向对应模块即可。
+在实验的 `verl_train_config.yaml`（或旧实验的 `verl_common_config.yaml`、EGPO 的 `verl_common_config_egpo.yaml`）中通过 `custom_reward_function.path` 等指向对应模块即可。
 
 ---
 
