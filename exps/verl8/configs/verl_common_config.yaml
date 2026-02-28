@@ -1,5 +1,5 @@
 # 占位：egpo_config 使用 verl_common_config_egpo，本文件仅保证 grpo_config 等引用不报错（verl8 主用 egpo_config）
-# 若需在 verl8 下跑 GRPO，可复制 verl_common_config_egpo 为 common，并改 algorithm.adv_estimator: grpo、reward 改回 reward_fn.py
+# 若需在 verl8 下跑 GRPO，可复制 verl_common_config_egpo 为 common，并改 algorithm.adv_estimator: grpo、custom_reward_function.path 改回 reward_fn.py
 algorithm:
   adv_estimator: grpo
   use_kl_in_reward: false
@@ -70,11 +70,9 @@ trainer:
   total_epochs: 1
   resume_mode: auto
 
-# 必须写在 reward 下，VeRL 只读取 config.reward.custom_reward_function
-reward:
-  custom_reward_function:
-    path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn.py
-    name: compute_score
+custom_reward_function:
+  path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn.py
+  name: compute_score
 
 ray_init_kwargs:
   runtime_env:

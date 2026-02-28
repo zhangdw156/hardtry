@@ -27,10 +27,9 @@ trainer:
   total_epochs: 1
 
 # 使用本实验目录下的 reward_fn.py（单条单轮下只打 1 次完整打印）
-reward:
-  custom_reward_function:
-    path: /dfs/data/work/hardtry/exps/verl7_demo/reward_fn.py
-    name: compute_score
+custom_reward_function:
+  path: /dfs/data/work/hardtry/exps/verl7_demo/reward_fn.py
+  name: compute_score
 
 hydra:
   searchpath:

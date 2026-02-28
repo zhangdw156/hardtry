@@ -73,11 +73,9 @@ trainer:
   resume_mode: auto
 
 # EGPO 使用严格二元 reward（src/hardtry/rl/reward_fn_egpo.py，与 reward_fn.py 区分）
-# 必须写在 reward 下，VeRL 只读取 config.reward.custom_reward_function
-reward:
-  custom_reward_function:
-    path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn_egpo.py
-    name: compute_score
+custom_reward_function:
+  path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn_egpo.py
+  name: compute_score
 
 ray_init_kwargs:
   runtime_env:
