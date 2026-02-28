@@ -14,5 +14,5 @@ bash exps/baseline_4bthinking/scripts/eval_local.sh
 或从仓库根目录：
 
 ```bash
-bash exps/commons/bin/eval_local.sh exps/baseline_4bthinking
+bash exps/commons/sbin/eval_local.sh exps/baseline_4bthinking
 ```

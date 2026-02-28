@@ -163,6 +163,18 @@ verl7/verl8 基座改为 Qwen3-4B-**Thinking**-2507（EGPO 利用 CoT 熵，需�
 - 27.5%
 - 27.5%
 
+### baseline_4bthinking
+
+> Qwen3-4B-Thinking-2507 在 BFCL multi-turn base 上的零样本表现（无训练），见 exps/baseline_4bthinking/README.md
+
+实验结果
+
+- 15.00%
+- 15.50%
+- 14.25%
+- 15.50%
+- 14.75%
+
 ### full4
 
 > ms-swift
