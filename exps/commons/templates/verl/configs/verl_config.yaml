@@ -1,0 +1,36 @@
+# =============================================================================
+# 实验元信息（路径、环境、实验名）。训练/评估/转换等均以此为准，vllm_config、
+# eval_config5、convert_messages_to_verl_config 中路径请与本文件保持一致。
+# =============================================================================
+# new_exp.sh 会替换 __EXP_NAME__；其余占位符需在实验目录中手动替换一次。
+# -----------------------------------------------------------------------------
+
+# 实验名（new_exp.sh 自动替换）
+exp_name: __EXP_NAME__
+
+# 按环境修改：工作/仓库根路径
+work_root: __WORK_ROOT__
+
+# 按环境修改：模型根路径
+models_root: __MODELS_ROOT__
+
+# 按环境修改：verl 训练用虚拟环境路径
+venv_verl: __VENV_VERL__
+
+# 按环境修改：评估用虚拟环境路径（如 gorilla）
+venv_gorilla: __VENV_GORILLA__
+
+# 以下为派生路径，一般无需改（由上面四个 + exp_name 决定）
+checkpoint_dir: __WORK_ROOT__/checkpoints/__EXP_NAME__
+exps_config_dir: __WORK_ROOT__/exps/__EXP_NAME__/configs
+eval_summary_dir: __WORK_ROOT__/exps/__EXP_NAME__/eval5_results
+eval_artifact_dir: __WORK_ROOT__/eval_results
+reward_fn_path: __WORK_ROOT__/src/hardtry/rl/reward_fn.py
+
+# 按实验修改：base 模型（convert/训练用）；merge 后推理用 merged_model_path
+base_model_path: __MODELS_ROOT__/Qwen3-4B-Instruct-2507
+merged_model_path: __MODELS_ROOT__/hardtry-4b-__EXP_NAME__
+
+# 按实验修改：数据根目录（parquet 与 convert 输出）
+data_root: __WORK_ROOT__/data/looptool
+data_input_path: __WORK_ROOT__/data/looptool/looptool_openai_messages_fc.jsonl

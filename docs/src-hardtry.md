@@ -30,9 +30,7 @@ src/hardtry/
   - `input`：输入 JSON 路径
   - `output`：输出 messages JSON 路径
   - `max_samples`：保留条数，-1 表示全部
-- **用法示例**：  
-  `uv run python -m hardtry.utils.convert_hardgen_to_messages exps/commons/configs/convert_hardgen_to_messages_config.yaml`  
-  或手动指定 `exps/commons/configs/convert_hardgen_to_messages_config.yaml`。
+- **用法示例**：使用某实验目录下 configs（如从 templates 生成后的 `exps/<实验名>/configs/convert_hardgen_to_messages_config.yaml`）或自行准备配置文件路径。
 
 ### convert_messages_to_verl
 

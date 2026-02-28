@@ -9,7 +9,7 @@ cd "$EXP_DIR" || exit 1
 VERL_VENV="/dfs/data/uv-venv/verl"
 PYTHON_CMD="$VERL_VENV/bin/python3"
 CONFIG_PATH="/dfs/data/work/hardtry/exps/${EXP_NAME}/configs"
-CONFIG_NAME="grpo_config"
+CONFIG_NAME="verl_common_config"
 mkdir -p "$EXP_DIR/logs"
 LOG_PATH="$EXP_DIR/logs/grpo.log"
 

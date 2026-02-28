@@ -1,13 +1,28 @@
 # Verl 实验模板
 
-新建 verl 类实验时，用 `exps/commons/bin/new_exp.sh verl <实验名>` 从本模板复制到 `exps/<实验名>`。
+用 `exps/commons/bin/new_exp.sh verl <实验名>` 从本模板复制到 `exps/<实验名>`。
 
-复制后需要你手动完成：
+## 配置约定
 
-1. **configs/** 下补齐/修改配置：参考 `exps/verl6/configs/`，至少需要  
-   `grpo_config.yaml`、`verl_common_config.yaml`、`convert_messages_to_verl_config.yaml`、  
-   `vllm_config.yaml`、`eval_config5.yaml`（其中 `experiment_name`、`summary_output_dir`、  
-   vLLM 的 `model`、merge 的 checkpoint/target 等按实验名修改）。
-2. **scripts/merge_verl_fsdp_local.sh** 中的 `CHECKPOINT_BASE`、`TARGET_DIR` 已按实验名生成，若路径规范不同请自行修改。
+每个 verl 实验**统一用两个配置文件**作为主配置：
 
-入口：`bash exps/<实验名>/run_local.sh`（可从任意目录执行）。
+| 文件 | 用途 |
+|------|------|
+| **verl_config.yaml** | 实验元信息：实验名、工作根路径、模型根路径、各 venv、checkpoint/评估/数据等路径。 |
+| **verl_common_config.yaml** | 实验具体参数：算法、数据、actor/rollout、trainer 超参、reward、Ray 等；路径通过 `${verl_config.xxx}` 引用元信息。同时为训练入口（Hydra `--config-name=verl_common_config`，内嵌组合 `ppo_trainer` + `verl_config`）。 |
+
+- **vllm_config.yaml**、**eval_config5.yaml**、**convert_messages_to_verl_config.yaml** 为各流水线所需，路径等元信息以 `verl_config.yaml` 为准，修改元信息时请与之同步。
+
+## 占位符（均在 verl_config 中；new_exp.sh 只替换 __EXP_NAME__）
+
+| 占位符 | 说明 | 生成时 |
+|--------|------|--------|
+| `__EXP_NAME__` | 实验名 | 自动替换 |
+| `__WORK_ROOT__` | 工作/仓库根路径 | 需手动替换 |
+| `__MODELS_ROOT__` | 模型根路径 | 需手动替换 |
+| `__VENV_VERL__` | verl 虚拟环境路径 | 需手动替换 |
+| `__VENV_GORILLA__` | 评估用 venv 路径 | 需手动替换 |
+
+生成后在实验目录做一次全局替换上述占位符；实验参数（batch、GPU 数等）在 **verl_common_config.yaml** 中按注释修改。执行：
+
+`bash exps/<实验名>/run_local.sh`

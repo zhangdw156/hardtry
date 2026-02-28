@@ -7,14 +7,14 @@
 | 路径 | 用途 |
 |------|------|
 | **bin/** | 稳定工具脚本，**唯一入口**。各实验通过 `scripts/` 转调或直接从仓库根调用。 |
-| **templates/** | 新建实验时复制用模板，复制到 `exps/<实验名>` 后自包含，不依赖 commons 后续改动。 |
-| **configs/** | 供 bin 与脚本使用的配置（default_exp_resources、convert 等），也可作复制参考。 |
+| **templates/** | 新建实验时复制用模板，复制到 `exps/<实验名>` 后自包含，configs 已内置。 |
+| **default_exp_resources.yaml** | set_exp_gpus.sh 未传参时的默认用卡数。 |
 
 ## 实验各步骤用卡数
 
 - **训练（verl）**：由实验目录下 `verl_common_config.yaml`（及若存在的 `verl_common_config_egpo.yaml`）中的 `actor_rollout_ref.num_workers`、`trainer.n_gpus_per_node`、`trainer.nnodes` 控制；脚本会固定 `nnodes: 1`，仅改前两者为「训练用卡数」。
 - **评估（vLLM）**：由实验目录下 vLLM 配置（`vllm_config.yaml` 或兼容旧实验的 `vllm_config4.yaml`）中的 `tensor_parallel_size` 控制，卡数可由 **set_exp_gpus.sh** 统一修改。
-- 默认值（未传参时）来自 **configs/default_exp_resources.yaml**（`train_n_gpus`、`eval_tensor_parallel_size`），可一次改齐默认用卡再批量跑脚本。
+- 默认值（未传参时）来自 **exps/commons/default_exp_resources.yaml**（`train_n_gpus`、`eval_tensor_parallel_size`），可一次改齐默认用卡再批量跑脚本。
 
 ---
 
@@ -26,7 +26,7 @@
 
 - **用法**：`bash exps/commons/bin/set_exp_gpus.sh <实验目录> [训练用卡数] [评估用卡数]`
 - **示例**：`bash exps/commons/bin/set_exp_gpus.sh exps/verl7`（使用默认）、`bash exps/commons/bin/set_exp_gpus.sh exps/verl7 4 4`
-- 若省略后两个参数，从 `exps/commons/configs/default_exp_resources.yaml` 读取默认值。
+- 若省略后两个参数，从 `exps/commons/default_exp_resources.yaml` 读取默认值。
 - 会改写该实验目录下 **configs/** 与 **conf/**（若存在）中的：
   - `verl_common_config.yaml`、`verl_common_config_egpo.yaml`：`num_workers`、`n_gpus_per_node`、`nnodes`（nnodes 固定为 1）；
   - `vllm_config.yaml`、`vllm_config4.yaml`（兼容）：`tensor_parallel_size`。
@@ -55,23 +55,17 @@
 
 - **用法**：`bash exps/commons/bin/new_exp.sh <verl|swift> <实验名>`
 - **示例**：`bash exps/commons/bin/new_exp.sh verl verl9`、`bash exps/commons/bin/new_exp.sh swift full9`
-- **verl**：复制 `templates/verl` 到 `exps/<实验名>`，复制后需在 `configs/` 补齐/修改配置（参考 `exps/verl6/configs`），再执行 `bash exps/<实验名>/run_local.sh`。
-- **swift**：复制 `templates/swift` 到 `exps/<实验名>`，复制后需补齐 `sft_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml`（参考 `exps/full5/configs`），并修改 `scripts/merge_swift_fsdp_local.sh` 中的 `CKPT_PATH`。
+- **verl**：复制 `templates/verl` 到 `exps/<实验名>`，configs 已内置，按需替换占位符后执行 `bash exps/<实验名>/run_local.sh`。
+- **swift**：复制 `templates/swift` 到 `exps/<实验名>`，configs 已内置，按需替换占位符后执行 `bash exps/<实验名>/run_local.sh`。
 
-两段数据转换（hardgen→messages→verl）可手动执行，使用 commons 下配置示例：
-
-```bash
-cd /path/to/repo
-uv run python -m hardtry.utils.convert_hardgen_to_messages exps/commons/configs/convert_hardgen_to_messages_config.yaml
-uv run python -m hardtry.utils.convert_messages_to_verl exps/commons/configs/convert_messages_to_verl_config.yaml
-```
+两段数据转换（hardgen→messages→verl）需在实验目录下执行，使用该实验 `configs/` 中的配置（如从 templates/verl 生成后的 `convert_messages_to_verl_config.yaml` 等），或自行准备配置文件路径。
 
 ---
 
 ## templates/ 模板
 
-- **templates/verl/**：Verl（GRPO）实验骨架，含 `configs/`、`scripts/`、`run_local.sh`。复制后需在 `configs/` 中补齐 `grpo_config.yaml`、`verl_common_config.yaml`、`convert_messages_to_verl_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml` 等（参考 `exps/verl6/configs`）；新实验推荐用 `vllm_config.yaml`（卡数由 set_exp_gpus.sh 管理）。
-- **templates/swift/**：ms-swift SFT 实验骨架。复制后需补齐 `sft_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml`（参考 `exps/full5/configs`），并修改 `scripts/merge_swift_fsdp_local.sh` 中的 `CKPT_PATH`。
+- **templates/verl/**：Verl（GRPO）实验骨架，configs 已内置（verl_config、verl_common_config、vllm、eval、convert 等），占位符替换后即可运行；卡数由 set_exp_gpus.sh 管理。
+- **templates/swift/**：ms-swift SFT 实验骨架，configs 已内置，占位符替换后即可运行。
 
 ## 约定
 

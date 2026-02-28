@@ -1,6 +1,6 @@
 # convert_messages_to_verl 默认配置（Hydra 格式）
 # 用法:
-#   指定配置文件: config_file=exps/commons/configs/convert_messages_to_verl_config.yaml
+#   指定配置文件: config_file=exps/<实验名>/configs/convert_messages_to_verl_config.yaml
 #   覆盖参数:     config_file=... max_samples=100
 #   或直接传入单个 yaml 路径（脚本会转为 config_file=...）
 

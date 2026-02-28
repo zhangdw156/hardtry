@@ -1,0 +1,13 @@
+# 转换流水线用：messages → parquet。路径以 verl_config.yaml 为准，请与之同步。
+# 本文件对应 verl_config.data_input_path、data_root、base_model_path；max_samples 为实验参数。
+
+input_path: "__WORK_ROOT__/data/looptool/looptool_openai_messages_fc.jsonl"
+output_dir: "__WORK_ROOT__/data/looptool"
+model_path: "__MODELS_ROOT__/Qwen3-4B-Instruct-2507"
+
+test_size: 0.05
+seed: 42
+num_proc: 8
+data_source: "looptool"
+ability: "function_call"
+max_samples: 1000

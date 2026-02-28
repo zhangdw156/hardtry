@@ -11,7 +11,7 @@ readonly TEMPLATES_DIR="$COMMONS_ROOT/templates"
 
 usage() {
     echo "用法: $0 <verl|swift> <实验名>"
-    echo "  verl  - GRPO/强化学习（参考 exps/verl6/configs）"
+    echo "  verl  - GRPO/强化学习（configs 已内置）"
     echo "  swift - ms-swift SFT（参考 exps/full5/configs）"
     echo "示例: $0 verl verl9  或  $0 swift full9"
     exit 1
@@ -47,16 +47,11 @@ esac
 # --- 替换占位符 ---
 _sed_replace_all "$EXP_DIR" "__EXP_NAME__" "$EXP_NAME"
 
-# 重命名 run___EXP_NAME__.yaml -> run_<实验名>.yaml
-placeholder_yaml="$EXP_DIR/configs/run___EXP_NAME__.yaml"
-final_yaml="$EXP_DIR/configs/run_${EXP_NAME}.yaml"
-[[ -f "$placeholder_yaml" ]] && mv "$placeholder_yaml" "$final_yaml"
-
 # --- 提示 ---
 echo "已生成: $EXP_DIR"
 case "$TEMPLATE_TYPE" in
     verl)
-        echo "请补齐 configs（参考 exps/verl6/configs），再执行: bash exps/$EXP_NAME/run_local.sh"
+        echo "configs 已就绪；按需修改 configs 内路径后执行: bash exps/$EXP_NAME/run_local.sh"
         ;;
     swift)
         echo "请补齐 configs（参考 exps/full5/configs）并修改 scripts/merge_swift_fsdp_local.sh 中的 CKPT_PATH，再执行: bash exps/$EXP_NAME/run_local.sh"
