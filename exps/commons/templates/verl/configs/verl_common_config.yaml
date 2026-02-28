@@ -91,9 +91,11 @@ trainer:
   total_epochs: 1
   resume_mode: auto
 
-custom_reward_function:
-  path: ${verl_config.reward_fn_path}
-  name: compute_score
+# VeRL reads custom reward only from config.reward.custom_reward_function (see VeRL #5255)
+reward:
+  custom_reward_function:
+    path: ${verl_config.reward_fn_path}
+    name: compute_score
 
 ray_init_kwargs:
   runtime_env:
