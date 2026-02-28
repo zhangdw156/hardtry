@@ -7,7 +7,7 @@ base_artifact_dir: "/dfs/data/work/hardtry/eval_results"
 experiment_name: "full8_parallel_5runs"
 summary_output_dir: "/dfs/data/work/hardtry/exps/full8/eval5_results"
 
-venv_activate_path: "/dfs/data/uv-venv/gorilla/activate"
+venv_activate_path: "/dfs/data/uv-venv/gorilla/bin/activate"
 remote_openai_tokenizer_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
 
 num_runs: 5
