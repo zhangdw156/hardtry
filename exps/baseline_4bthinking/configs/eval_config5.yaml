@@ -1,9 +1,10 @@
+# 仅用于验证 Qwen3-4B-Thinking-2507 在 BFCL multi-turn base 上的表现（无训练）
 model_name: "Qwen/Qwen3-4B-FC"
 test_category: "multi_turn_base"
 
 base_artifact_dir: "/dfs/data/work/hardtry/eval_results"
-experiment_name: "verl8_parallel_5runs"
-summary_output_dir: "/dfs/data/work/hardtry/exps/verl8/eval5_results"
+experiment_name: "baseline_4bthinking_parallel_5runs"
+summary_output_dir: "/dfs/data/work/hardtry/exps/baseline_4bthinking/eval5_results"
 
 venv_activate_path: "/dfs/data/uv-venv/gorilla/bin/activate"
 remote_openai_tokenizer_path: "/dfs/data/models/Qwen3-4B-Thinking-2507"
