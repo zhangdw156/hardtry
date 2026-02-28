@@ -51,7 +51,7 @@ verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
 新增 verl7（GRPO + hardgen 1k）、verl8（EGPO + hardgen 1k），数据均为 hardgen 1k（convert 时 max_samples=1000 产出 hardgen_1k/train|test.parquet）。verl8 使用 EGPO 算法与严格二元 reward（src/hardtry/rl/reward_fn_egpo.py）。为保证两实验使用完全相同的训练集与测试集，请先执行一次 convert，再分别执行两实验的 run_train_only.sh（见 exps/verl7、exps/verl8 的 README）。
 
-verl7/verl8 基座改为 Qwen3-4B-**Thinking**-2507（EGPO 利用 CoT 熵，需思考模型）。reward_fn_egpo：先校验 <think>...</think>... 格式，再对 </think> 后内容做 tool_call AST 校验，格式正确且 AST 全对才给 1 分。新增实验 **baseline_4bthinking**：仅用于验证 Qwen3-4B-**Thinking**-2507 在 BFCL multi-turn base 上的表现（无训练），见 exps/baseline_4bthinking/README.md。
+verl7/verl8 基座改为 Qwen3-4B-**Thinking**-2507（EGPO 利用 CoT 熵，需思考模型）。reward_fn_egpo：先校验 <think>...</think>... 格式，再对 </think> 后内容做 tool_call AST 校验，格式正确且 AST 全对才给 1 分。新增实验 **baseline_4bthinking**：仅用于验证 Qwen3-4B-**Thinking**-2507 在 BFCL multi-turn base 上的表现（无训练），见 exps/baseline_4bthinking/README.md。新增 **baseline_8b**：仅用于验证 Qwen3-8B 在 BFCL multi-turn base 上的表现，见 exps/baseline_8b/README.md。
 
 ## 实验结果
 

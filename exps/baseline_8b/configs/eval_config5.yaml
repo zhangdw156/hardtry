@@ -1,0 +1,16 @@
+# 仅用于验证 Qwen3-8B 在 BFCL multi-turn base 上的表现（无训练）
+model_name: "Qwen/Qwen3-8B-FC"
+test_category: "multi_turn_base"
+
+base_artifact_dir: "/dfs/data/work/hardtry/eval_results"
+experiment_name: "baseline_8b_parallel_5runs"
+summary_output_dir: "/dfs/data/work/hardtry/exps/baseline_8b/eval5_results"
+
+venv_activate_path: "/dfs/data/uv-venv/gorilla/bin/activate"
+remote_openai_tokenizer_path: "/dfs/data/models/Qwen3-8B"
+
+num_runs: 5
+threads_per_run: 32
+
+remote_openai_base_url: "http://localhost:8000/v1"
+remote_openai_api_key: "EMPTY"
