@@ -52,8 +52,9 @@ RUN_DIR="$(cd "$RUN_DIR" && pwd)"
 LAST_CKPT="$(find_latest_checkpoint "$RUN_DIR")"
 [[ -n "$LAST_CKPT" ]] || { echo "错误: 在 $RUN_DIR 下未找到 checkpoint-*" >&2; exit 1; }
 
+# Swift/FSDP 可能保存为单文件（旧）或目录（新，内含 .metadata / __*_0.distcp 等）
 CKPT_PATH="$RUN_DIR/checkpoint-${LAST_CKPT}/pytorch_model_fsdp_0"
-[[ -f "$CKPT_PATH" ]] || { echo "错误: 不存在 $CKPT_PATH" >&2; exit 1; }
+[[ -f "$CKPT_PATH" || -d "$CKPT_PATH" ]] || { echo "错误: 不存在 $CKPT_PATH" >&2; exit 1; }
 
 # 若未传 BASE_MODEL_PATH，不拷贝 tokenizer（由调用方或后续步骤处理）
 COPY_BASE="${BASE_MODEL_PATH:-}"
