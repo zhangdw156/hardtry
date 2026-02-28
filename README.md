@@ -11,6 +11,8 @@ cd exps/verl6 && bash run_local.sh
 
 commons 示例（两段数据转换）：`bash exps/commons/run_example.sh`
 
+详细使用说明见 **docs/**：`docs/exps-commons.md`（实验公共层）、`docs/src-hardtry.md`（hardtry 包）。
+
 ---
 
 ### 把ipynb导出为py
