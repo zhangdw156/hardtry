@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 在指定实验目录下启动 vLLM，再执行 BFCL 评估。实验目录需含 configs/vllm_config.yaml 与 configs/eval_config5.yaml。
-# 用法: eval_local.sh <实验目录>
+# 用法: eval_local.sh <实验目录>（仅由实验 scripts 转调，勿直接对外）
 
 set -euo pipefail
 

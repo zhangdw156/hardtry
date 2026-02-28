@@ -1,0 +1,17 @@
+# 评估流水线用：BFCL 评估配置。路径与 verl 模板占位符一致。
+
+model_name: "Qwen/Qwen3-4B-FC"
+test_category: "multi_turn_base"
+
+base_artifact_dir: "__WORK_ROOT__/eval_results"
+experiment_name: "__EXP_NAME___parallel_5runs"
+summary_output_dir: "__WORK_ROOT__/exps/__EXP_NAME__/eval5_results"
+
+venv_activate_path: "__VENV_GORILLA__/activate"
+remote_openai_tokenizer_path: "__MODELS_ROOT__/Qwen3-4B-Instruct-2507"
+
+num_runs: 5
+threads_per_run: 32
+
+remote_openai_base_url: "http://localhost:8000/v1"
+remote_openai_api_key: "EMPTY"

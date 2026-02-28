@@ -5,4 +5,4 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$EXP_DIR/../.." && pwd)"
 
-exec bash "$REPO_ROOT/exps/commons/bin/eval_local.sh" "$EXP_DIR"
+exec bash "$REPO_ROOT/exps/commons/sbin/eval_local.sh" "$EXP_DIR"

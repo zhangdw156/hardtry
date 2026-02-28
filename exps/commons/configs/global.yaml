@@ -1,0 +1,14 @@
+# 本机全局配置，一台机器配置一次即可。new_exp.sh 会据此替换模板中的占位符；
+# set_exp_gpus.sh 未传参时从此读取默认用卡数。请按本机环境修改后保留，勿提交个人路径。
+
+# 路径（new_exp 占位符替换用）
+work_root: /dfs/data/work/hardtry
+models_root: /dfs/data/models
+venv_verl: /dfs/data/uv-venv/verl
+venv_gorilla: /dfs/data/uv-venv/gorilla
+venv_swift: /dfs/data/uv-venv/modelscope
+venv_merge: /dfs/data/uv-venv/huggingface
+
+# 默认用卡数（set_exp_gpus.sh 未传参时使用）
+train_n_gpus: 2
+eval_tensor_parallel_size: 2

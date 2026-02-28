@@ -9,4 +9,4 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 CHECKPOINT_BASE="__WORK_ROOT__/checkpoints/__EXP_NAME__"
 TARGET_DIR="__MODELS_ROOT__/hardtry-4b-__EXP_NAME__"
 
-exec bash "$REPO_ROOT/exps/commons/bin/merge_verl_fsdp_auto.sh" "$CHECKPOINT_BASE" "$TARGET_DIR"
+exec bash "$REPO_ROOT/exps/commons/sbin/merge_verl_fsdp_auto.sh" "$CHECKPOINT_BASE" "$TARGET_DIR"

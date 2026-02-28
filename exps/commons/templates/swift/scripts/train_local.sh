@@ -6,10 +6,12 @@ EXP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 EXP_NAME="$(basename "$EXP_DIR")"
 cd "$EXP_DIR" || exit 1
 
-SFT_CONFIG="/dfs/data/work/hardtry/exps/${EXP_NAME}/configs/sft_config.yaml"
+SFT_CONFIG="$EXP_DIR/configs/sft_config.yaml"
 
-source /dfs/data/uv-venv/modelscope/bin/activate
+# 按环境修改：swift/modelscope 虚拟环境路径
+source __VENV_SWIFT__/bin/activate
 
+# 按机器修改：GPU 数量与可见设备
 OMP_NUM_THREADS=4 \
 NPROC_PER_NODE=4 \
 CUDA_VISIBLE_DEVICES=0,1,2,3 \

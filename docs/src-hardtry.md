@@ -60,7 +60,7 @@ src/hardtry/
   - `base_artifact_dir`、`experiment_name`：单次实验日志与结果根目录
   - `summary_output_dir`：汇总 CSV 的目标目录（如各实验的 `eval5_results`）
 - **用法示例**：  
-  先由 `exps/commons/bin/eval_local.sh <实验目录>` 启动 vLLM，再在脚本内部调用：  
+  先由 `exps/commons/sbin/eval_local.sh <实验目录>` 启动 vLLM，再在脚本内部调用：  
   `uv run -m hardtry.utils.eval_runner "$EVAL_CONFIG_ABS"`（EVAL_CONFIG 一般为该实验的 `configs/eval_config5.yaml`）。
 
 ### merge（LoRA/DoRA 合并）
@@ -77,7 +77,7 @@ src/hardtry/
   `uv run python -m hardtry.utils.merge --base_model_path /path/to/base --lora_path /path/to/lora --output_path /path/to/merged`  
   或传入 YAML（若实现支持）：  
   `uv run python -m hardtry.utils.merge merge_config.yaml`  
-  注意：VeRL 实验通常使用 `exps/commons/bin/merge_verl_fsdp_auto.sh` 做 FSDP checkpoint merge，与本模块的 LoRA merge 场景不同。
+  注意：VeRL 实验通常使用 `exps/commons/sbin/merge_verl_fsdp_auto.sh` 做 FSDP checkpoint merge，与本模块的 LoRA merge 场景不同。
 
 ---
 
@@ -104,7 +104,7 @@ VeRL 训练时通过配置指定自定义 reward 模块，入口函数为 `compu
 ## 与 exps 的配合
 
 - **数据准备**：两段 convert 可手动按文档执行；各实验的 convert 脚本调用 `convert_messages_to_verl`，配置放在实验目录 `configs/` 下。
-- **评估**：`exps/commons/bin/eval_local.sh` 启动 vLLM 后调用 `hardtry.utils.eval_runner`，eval 配置由实验目录的 `configs/eval_config5.yaml` 提供。
+- **评估**：`exps/commons/sbin/eval_local.sh` 启动 vLLM 后调用 `hardtry.utils.eval_runner`，eval 配置由实验目录的 `configs/eval_config5.yaml` 提供。
 - **奖励**：verl7/verl8 等实验在 VeRL 配置中引用 `hardtry.rl.reward_fn_egpo`，其它 GRPO 实验可引用 `hardtry.rl.reward_fn`。
 
 更多实验级说明见 `exps/README.md` 与 `docs/exps-commons.md`。

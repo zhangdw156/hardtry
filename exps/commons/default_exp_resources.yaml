@@ -1,5 +1,0 @@
-# 实验各步骤默认用卡数（供 set_exp_gpus.sh 读取）
-# 仅当调用 set_exp_gpus.sh 时未传入「训练用卡数」「评估用卡数」时使用此处默认值。
-
-train_n_gpus: 2
-eval_tensor_parallel_size: 2

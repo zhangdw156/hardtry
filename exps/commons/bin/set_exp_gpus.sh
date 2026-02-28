@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # 将指定实验目录下的训练/评估用卡数写入对应 YAML（verl_common_config*.yaml、vllm_config*.yaml）。
 # 用法: set_exp_gpus.sh <实验目录> [训练用卡数] [评估用卡数]
-# 省略后两参时从 exps/commons/default_exp_resources.yaml 读取。
+# 省略后两参时从 exps/commons/configs/global.yaml 读取。
 
 set -euo pipefail
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 readonly COMMONS_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-readonly DEFAULT_RESOURCES="$COMMONS_ROOT/default_exp_resources.yaml"
+readonly GLOBAL_CONFIG="$COMMONS_ROOT/configs/global.yaml"
 
 usage() {
     echo "用法: $0 <实验目录> [训练用卡数] [评估用卡数]"
@@ -56,8 +56,8 @@ _update_vllm_in() {
 # --- 参数与默认值 ---
 [[ -n "${1:-}" ]] || usage
 EXP_DIR="$(cd "$1" && pwd)"
-TRAIN_GPUS="${2:-$(grep -E '^train_n_gpus:' "$DEFAULT_RESOURCES" 2>/dev/null | sed -E 's/^train_n_gpus:[[:space:]]*//' || echo "2")}"
-EVAL_GPUS="${3:-$(grep -E '^eval_tensor_parallel_size:' "$DEFAULT_RESOURCES" 2>/dev/null | sed -E 's/^eval_tensor_parallel_size:[[:space:]]*//' || echo "4")}"
+TRAIN_GPUS="${2:-$(grep -E '^train_n_gpus:' "$GLOBAL_CONFIG" 2>/dev/null | sed -E 's/^train_n_gpus:[[:space:]]*//' || echo "2")}"
+EVAL_GPUS="${3:-$(grep -E '^eval_tensor_parallel_size:' "$GLOBAL_CONFIG" 2>/dev/null | sed -E 's/^eval_tensor_parallel_size:[[:space:]]*//' || echo "4")}"
 
 # --- 执行 ---
 for sub in configs conf; do

@@ -1,22 +1,18 @@
 #!/bin/bash
-# 步骤：Swift/FSDP checkpoint 合并为完整模型。可从任意目录执行（使用绝对路径）。复制后请将 CKPT_PATH 改为本次训练的 checkpoint 路径。
+# 步骤：自动合并「最近一次」Swift/FSDP checkpoint 为完整模型（与 verl 的 merge_verl_fsdp_local 行为一致）。
 
-source /dfs/data/uv-venv/huggingface/bin/activate
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-BASE_MODEL_PATH="/dfs/data/models/Qwen3-4B-Instruct-2507"
-# 复制后修改：替换为 exps/<实验名> 下本次训练产生的路径，例如
-# .../checkpoints/__EXP_NAME__/v0-20260227-133416/checkpoint-11/pytorch_model_fsdp_0
-CKPT_PATH="/dfs/data/work/hardtry/checkpoints/__EXP_NAME__/v0-YYYYMMDD-HHMMSS/checkpoint-N/pytorch_model_fsdp_0"
-OUTPUT_PATH="/dfs/data/models/hardtry-4b-__EXP_NAME__"
+# 按环境修改：merge 用虚拟环境（如 huggingface）
+source __VENV_MERGE__/bin/activate
 
-accelerate merge-weights \
-    "${CKPT_PATH}" \
-    "${OUTPUT_PATH}"
+# 与 sft_config / vllm_config 一致，使用相同占位符；自动找最近 run 与 checkpoint
+CHECKPOINT_BASE="__WORK_ROOT__/checkpoints/__EXP_NAME__"
+TARGET_DIR="__MODELS_ROOT__/hardtry-4b-__EXP_NAME__"
+BASE_MODEL_PATH="__MODELS_ROOT__/Qwen3-4B-Instruct-2507"
 
-cp "${BASE_MODEL_PATH}/tokenizer.json" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/tokenizer_config.json" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/vocab.json" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/merges.txt" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/config.json" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/configuration.json" "${OUTPUT_PATH}"
-cp "${BASE_MODEL_PATH}/generation_config.json" "${OUTPUT_PATH}"
+bash "$REPO_ROOT/exps/commons/sbin/merge_swift_fsdp_auto.sh" \
+    "$CHECKPOINT_BASE" \
+    "$TARGET_DIR" \
+    "$BASE_MODEL_PATH"

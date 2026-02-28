@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 将 checkpoint 根目录下最后一次 global_step_* 的 actor 合并到目标目录。
-# 用法: merge_verl_fsdp_auto.sh <CHECKPOINT_BASE> <TARGET_DIR>
+# 用法: merge_verl_fsdp_auto.sh <CHECKPOINT_BASE> <TARGET_DIR>（仅由实验 scripts 转调）
 # 可选环境变量: PYTHON_CMD (默认 /dfs/data/uv-venv/verl/bin/python3)
 
 set -euo pipefail
