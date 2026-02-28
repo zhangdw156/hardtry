@@ -32,7 +32,6 @@ verl4的结果，比full4的结果差就算了，为什么会比verl1的效果�
 
 ### 26-02-27
 
-
 目前看来，如果像构造高质量的数据，离不开昂贵的api，究其本质，更接近蒸馏
 
 所以还是觉得RL更有搞头（也许）
@@ -49,9 +48,17 @@ full7，在looptool 1k上full sft，几乎无效，甚至可能下降
 
 verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
-新增 verl7（GRPO + hardgen 1k）、verl8（EGPO + hardgen 1k），数据均为 hardgen 1k（convert 时 max_samples=1000 产出 hardgen_1k/train|test.parquet）。verl8 使用 EGPO 算法与严格二元 reward（src/hardtry/rl/reward_fn_egpo.py）。为保证两实验使用完全相同的训练集与测试集，请先执行一次 convert，再分别执行两实验的 run_train_only.sh（见 exps/verl7、exps/verl8 的 README）。
+### 26-02-28
 
-verl7/verl8 基座改为 Qwen3-4B-**Thinking**-2507（EGPO 利用 CoT 熵，需思考模型）。reward_fn_egpo：先校验 <think>...</think>... 格式，再对 </think> 后内容做 tool_call AST 校验，格式正确且 AST 全对才给 1 分。新增实验 **baseline_4bthinking**：仅用于验证 Qwen3-4B-**Thinking**-2507 在 BFCL multi-turn base 上的表现（无训练），见 exps/baseline_4bthinking/README.md。新增 **baseline_8b**：仅用于验证 Qwen3-8B 在 BFCL multi-turn base 上的表现，见 exps/baseline_8b/README.md。
+新增 **verl7**（GRPO）、**verl8**（EGPO），数据均为 hardgen 1k（convert 产出 hardgen_1k/train.parquet、test.parquet）。两实验同数据、同奖励、同参，仅 adv 不同；奖励用 reward_fn_egpo 严格二元。跑法：先执行一次 convert，再分别 run_train_only.sh，见 exps/verl7、exps/verl8 的 README。
+
+verl7/verl8 基座为 Qwen3-4B-**Thinking**-2507（EGPO 用 CoT 熵需思考模型）。reward_fn_egpo 先校验 think 块格式，再对 think 块后内容做 tool_call AST 校验，全对才 1 分。另新增 **baseline_4bthinking**（4B-Thinking 零样本）、**baseline_8b**（8B 零样本），见各自 README。
+
+新增 **verl9**（GRPO + hardgen 1k），与 verl7/8 同数据、同参，基座 Qwen3-4B-**Instruct**-2507，奖励 reward_fn_grpo（不要求 think 块）。见 exps/verl9/README.md。
+
+新增 **full8**、**full9**（全量 SFT，hardgen 1k），与 RL 同数据：train.parquet→train.jsonl、test.parquet→test.jsonl 由 parquet_to_openai_messages 导出，SFT 中 dataset=train.jsonl、val_dataset=test.jsonl。full8 基座 Qwen3-4B-Thinking，full9 基座 Qwen3-4B-Instruct。见 exps/full8、exps/full9 的 README。
+
+以上 verl7、verl8、verl9、full8、full9 均未完成，待跑。
 
 ## 实验结果
 
@@ -327,22 +334,52 @@ verl7/verl8 基座改为 Qwen3-4B-**Thinking**-2507（EGPO 利用 CoT 熵，需�
 - 27.50%
 - 26.50%
 
-### verl7
+### verl7（未完成）
 
 > verl
 
-> GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（src/hardtry/rl/reward_fn_egpo.py 严格二元）、其余共同参数一致。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
+> GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（reward_fn_egpo 严格二元）、同参；基座 Qwen3-4B-Thinking。数据：先 convert 一次，再 run_train_only.sh。见 exps/verl7/README.md。
 
 实验结果
 
-- （待跑）
+- （未完成，待跑）
 
-### verl8
+### verl8（未完成）
 
 > verl
 
-> EGPO，hardgen 1k，与 verl7 同数据、同奖励（src/hardtry/rl/reward_fn_egpo.py）、其余共同参数一致，仅 adv_estimator 为 egpo。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
+> EGPO，hardgen 1k，与 verl7 同数据、同奖励、同参，仅 adv_estimator 为 egpo；基座 Qwen3-4B-Thinking。见 exps/verl8/README.md。
 
 实验结果
 
-- （待跑）
+- （未完成，待跑）
+
+### verl9（未完成）
+
+> verl
+
+> GRPO，hardgen 1k，与 verl7/8 同数据、同参；基座 **Qwen3-4B-Instruct**，奖励 reward_fn_grpo（不要求 think 块）。见 exps/verl9/README.md。
+
+实验结果
+
+- （未完成，待跑）
+
+### full8（未完成）
+
+> ms-swift
+
+> 全量 SFT，hardgen 1k；与 RL 同数据（dataset=train.jsonl，val_dataset=test.jsonl，由 parquet 导出）；基座 Qwen3-4B-Thinking，template qwen3。见 exps/full8/README.md。
+
+实验结果
+
+- （未完成，待跑）
+
+### full9（未完成）
+
+> ms-swift
+
+> 全量 SFT，hardgen 1k；与 RL 同数据（dataset=train.jsonl，val_dataset=test.jsonl）；基座 Qwen3-4B-Instruct，template qwen3_nothinking。见 exps/full9/README.md。
+
+实验结果
+
+- （未完成，待跑）
