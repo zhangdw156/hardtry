@@ -1,0 +1,21 @@
+# verl7_demo：基于 verl7 的 GRPO，仅替换为「带打印的奖励函数」，用于验证：
+# 1) VeRL 流程可跑通  2) 奖励函数被正确加载并应用（见日志中的 [verl7_demo reward_fn]）
+defaults:
+  - ppo_trainer
+  - verl_common_config
+  - _self_
+
+trainer:
+  experiment_name: verl7_demo
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl7_demo
+
+# 使用本实验目录下的 reward_fn.py（内含详细 print，便于验证加载与应用）
+reward:
+  custom_reward_function:
+    path: /dfs/data/work/hardtry/exps/verl7_demo/reward_fn.py
+    name: compute_score
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file:///dfs/data/work/hardtry/exps/verl7/configs/
