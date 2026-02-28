@@ -54,12 +54,26 @@ def _extract_after_think(solution_str: str) -> str | None:
     return after if after else None
 
 
+# 调试：前若干次调用打印输入，便于排查 verl7 critic/score/mean 恒为 0
+_DEBUG_CALL_COUNT = 0
+_DEBUG_MAX_PRINT = 5
+
+
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
     """
     EGPO 严格二元奖励：先验证 <think>...</think>... 格式，再对 </think> 后的内容做 AST（tool_call）校验；
     格式符合且 AST 全对才 1.0，否则 0.0。
     与 verl 自定义奖励入口签名一致。
     """
+    global _DEBUG_CALL_COUNT
+    _DEBUG_CALL_COUNT += 1
+    if _DEBUG_CALL_COUNT <= _DEBUG_MAX_PRINT:
+        print(
+            f"[reward_fn_egpo] call #{_DEBUG_CALL_COUNT} data_source={data_source!r} "
+            f"solution_len={len(solution_str or '')} ground_truth_len={len(str(ground_truth or ''))} "
+            f"solution_preview={(solution_str or '')[:200]!r} gt_preview={(str(ground_truth or '').strip())[:150]!r}"
+        )
+
     if not (solution_str and str(ground_truth).strip()):
         return 0.0
 
@@ -77,7 +91,10 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
         if not pd_tools:
             return 0.0
         if compare_parsed_content(gt_tools, pd_tools):
+            if _DEBUG_CALL_COUNT <= _DEBUG_MAX_PRINT:
+                print("[reward_fn_egpo] -> 1.0 (match)")
             return 1.0
-    except Exception:
-        pass
+    except Exception as e:
+        if _DEBUG_CALL_COUNT <= _DEBUG_MAX_PRINT:
+            print(f"[reward_fn_egpo] exception: {e}")
     return 0.0
