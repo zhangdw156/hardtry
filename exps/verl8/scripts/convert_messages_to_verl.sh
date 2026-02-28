@@ -1,5 +1,5 @@
-#!/bin/bash
-# 步骤：将 messages 转为 verl 所需 parquet。可从任意目录执行（仅依赖脚本自身路径）。
+#!/usr/bin/env bash
+# 步骤：调用 hardtry.utils.convert_messages_to_verl，使用本实验 configs 下配置。可从任意目录执行。
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

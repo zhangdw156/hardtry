@@ -6,11 +6,9 @@
 
 | 路径 | 用途 |
 |------|------|
-| **bin/** | 稳定工具脚本，供各实验或根目录包装**直接调用**。接口保持稳定，便于维护。 |
-| **templates/** | 新建实验时**复制用**的模板，复制到 `exps/<实验名>` 后该实验目录自包含，不依赖 commons 后续改动。 |
-| **configs/** | commons 自用配置（convert、default 资源、vllm/eval 示例），也可作为复制参考。 |
-| 根目录 `eval_local.sh`、`merge_verl_fsdp_auto.sh` | **兼容包装**，仅转调 `bin/` 内同名脚本，保留旧用法。 |
-| **run_example.sh** | 示例：依次执行两段数据转换（hardgen→messages→verl），使用 commons 的 convert 配置。 |
+| **bin/** | 稳定工具脚本，**唯一入口**。各实验通过 `scripts/` 转调或直接从仓库根调用。 |
+| **templates/** | 新建实验时复制用模板，复制到 `exps/<实验名>` 后自包含，不依赖 commons 后续改动。 |
+| **configs/** | 供 bin 与脚本使用的配置（default_exp_resources、convert 等），也可作复制参考。 |
 
 ## 实验各步骤用卡数
 
@@ -36,20 +34,20 @@
 
 ### eval_local.sh
 
-从指定实验目录读取配置，启动 vLLM 并跑评估。
+在指定实验目录下启动 vLLM，再执行 BFCL 评估。
 
 - **用法**：`bash exps/commons/bin/eval_local.sh <实验目录>`
 - **示例**：`bash exps/commons/bin/eval_local.sh exps/verl7`
-- 会 `cd` 到实验目录，优先使用 `configs/vllm_config.yaml`，不存在则使用 `configs/vllm_config4.yaml`；eval 配置为 `configs/eval_config5.yaml`。需事先在实验目录下准备好对应配置文件。
-- 各实验的 `scripts/eval_local.sh` 通常转调本脚本，传入实验目录绝对路径。
+- 实验目录须包含 `configs/vllm_config.yaml` 与 `configs/eval_config5.yaml`。vLLM 就绪后调用 `hardtry.utils.eval_runner`。
+- 各实验的 `scripts/eval_local.sh` 转调本脚本并传入实验目录绝对路径。
 
 ### merge_verl_fsdp_auto.sh
 
-在 checkpoint 根目录下取最后一次 `global_step_*` 做 merge。
+将 checkpoint 根目录下**最后一次** `global_step_*` 的 actor 合并到目标目录。
 
 - **用法**：`bash exps/commons/bin/merge_verl_fsdp_auto.sh <CHECKPOINT_BASE> <TARGET_DIR>`
 - **示例**：`bash exps/commons/bin/merge_verl_fsdp_auto.sh /path/to/checkpoints/verl7 /path/to/models/hardtry-4b-verl7`
-- 各实验的 `scripts/merge_verl_fsdp_local.sh` 可转调本脚本，并传入该实验的 checkpoint 与 target 路径。
+- 可选环境变量：`PYTHON_CMD`（默认 `/dfs/data/uv-venv/verl/bin/python3`）。各实验的 `scripts/merge_verl_fsdp_local.sh` 转调本脚本并传入路径。
 
 ### new_exp.sh
 
@@ -60,17 +58,13 @@
 - **verl**：复制 `templates/verl` 到 `exps/<实验名>`，复制后需在 `configs/` 补齐/修改配置（参考 `exps/verl6/configs`），再执行 `bash exps/<实验名>/run_local.sh`。
 - **swift**：复制 `templates/swift` 到 `exps/<实验名>`，复制后需补齐 `sft_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml`（参考 `exps/full5/configs`），并修改 `scripts/merge_swift_fsdp_local.sh` 中的 `CKPT_PATH`。
 
----
+两段数据转换（hardgen→messages→verl）可手动执行，使用 commons 下配置示例：
 
-## 根目录兼容包装与示例
-
-- **eval_local.sh**：无参时使用 commons 自身目录作为实验目录；有参时转发给 `bin/eval_local.sh`。  
-  示例：`bash exps/commons/eval_local.sh`、`bash exps/commons/eval_local.sh exps/verl7`
-- **merge_verl_fsdp_auto.sh**：原样转发参数给 `bin/merge_verl_fsdp_auto.sh`。
-- **run_example.sh**：依次执行两段 convert，使用 commons 的配置。  
-  用法：`bash exps/commons/run_example.sh`（需在仓库根目录或能访问到 `exps/commons/configs` 的路径下执行；内部会 `cd` 到仓库根）。  
-  - 步骤 1：`hardtry.utils.convert_hardgen_to_messages`，配置 `exps/commons/configs/convert_hardgen_to_messages_config.yaml`  
-  - 步骤 2：`hardtry.utils.convert_messages_to_verl`，配置 `exps/commons/configs/convert_messages_to_verl_config.yaml`
+```bash
+cd /path/to/repo
+uv run python -m hardtry.utils.convert_hardgen_to_messages exps/commons/configs/convert_hardgen_to_messages_config.yaml
+uv run python -m hardtry.utils.convert_messages_to_verl exps/commons/configs/convert_messages_to_verl_config.yaml
+```
 
 ---
 

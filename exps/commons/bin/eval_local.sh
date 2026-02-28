@@ -1,84 +1,85 @@
-#!/bin/bash
-# 稳定工具：从传入的实验目录读取 configs/ 下配置，启动 vLLM 并跑评估。
-# 用法:
-#   bash exps/commons/bin/eval_local.sh <实验目录>   # 如 exps/verl6
-#   bash exps/commons/eval_local.sh <实验目录>       # 兼容包装，会转调本脚本
+#!/usr/bin/env bash
+# 在指定实验目录下启动 vLLM，再执行 BFCL 评估。实验目录需含 configs/vllm_config.yaml 与 configs/eval_config5.yaml。
+# 用法: eval_local.sh <实验目录>
 
-set -e
+set -euo pipefail
 
-if [ -z "$1" ]; then
-    echo "用法: $0 <实验目录>  例如: $0 exps/verl6"
+readonly VLLM_PORT=8000
+readonly VLLM_TIMEOUT=600
+readonly EVAL_CONFIG_REL="configs/eval_config5.yaml"
+readonly VLLM_CONFIG_REL="configs/vllm_config.yaml"
+readonly VLLM_LOG_REL="logs/vllm_server.log"
+
+usage() {
+    echo "用法: $0 <实验目录>"
+    echo "示例: $0 exps/verl7"
     exit 1
-fi
-EVAL_EXP_DIR="$(cd "$1" && pwd)"
-cd "$EVAL_EXP_DIR" || exit 1
+}
 
-if [ -f "/dfs/data/sbin/setup.sh" ]; then
-    source /dfs/data/sbin/setup.sh
-fi
+# 等待 vLLM 在 PORT 上就绪
+wait_for_vllm() {
+    local pid=$1
+    local port=$2
+    local timeout=$3
+    local start now elapsed
+    start=$(date +%s)
+    while true; do
+        if curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${port}/v1/models" 2>/dev/null | grep -q "200"; then
+            echo "✅ vLLM 已就绪"
+            return 0
+        fi
+        if ! kill -0 "$pid" 2>/dev/null; then
+            echo "❌ vLLM 进程已退出，请查看日志" >&2
+            return 1
+        fi
+        now=$(date +%s)
+        elapsed=$((now - start))
+        if (( elapsed >= timeout )); then
+            echo "❌ 等待 vLLM 超时 (${timeout}s)" >&2
+            return 1
+        fi
+        sleep 5
+        echo -n "."
+    done
+}
 
-# 统一使用 configs 目录；vllm 配置优先 vllm_config.yaml（卡数由 set_exp_gpus.sh 管理），兼容旧实验的 vllm_config4.yaml
+# --- 参数 ---
+[[ -n "${1:-}" ]] || usage
+EXP_DIR="$(cd "$1" && pwd)"
+cd "$EXP_DIR"
+
+VLLM_CONFIG="$EXP_DIR/$VLLM_CONFIG_REL"
+EVAL_CONFIG_ABS="$EXP_DIR/$EVAL_CONFIG_REL"
+VLLM_LOG="$EXP_DIR/$VLLM_LOG_REL"
+
+[[ -f "$VLLM_CONFIG" ]] || { echo "错误: 未找到 $VLLM_CONFIG_REL" >&2; exit 1; }
+[[ -f "$EVAL_CONFIG_ABS" ]] || { echo "错误: 未找到 $EVAL_CONFIG_REL" >&2; exit 1; }
+
 mkdir -p logs
-if [ -f "configs/vllm_config.yaml" ]; then
-    VLLM_CONFIG="configs/vllm_config.yaml"
-else
-    VLLM_CONFIG="configs/vllm_config4.yaml"
-fi
-EVAL_CONFIG="configs/eval_config5.yaml"
-VLLM_LOG="logs/vllm_server.log"
-PORT=8000
+[[ -f /dfs/data/sbin/setup.sh ]] && source /dfs/data/sbin/setup.sh
 
+# --- 启动 vLLM ---
 echo "======================================================="
-echo "🚀 Starting vLLM Server..."
+echo "🚀 启动 vLLM..."
 echo "======================================================="
-
 nohup uv run vllm serve --config "$VLLM_CONFIG" > "$VLLM_LOG" 2>&1 &
 VLLM_PID=$!
-echo "✅ vLLM Server PID: $VLLM_PID"
-echo "📝 Logs are being written to: $VLLM_LOG"
+echo "PID: $VLLM_PID  日志: $VLLM_LOG"
 
 cleanup() {
-    echo ""
-    echo "======================================================="
-    echo "🧹 Cleaning up..."
-    if ps -p $VLLM_PID > /dev/null 2>&1; then
-        echo "🔪 Killing vLLM Server (PID: $VLLM_PID)..."
-        kill $VLLM_PID
-    else
-        echo "⚠️ vLLM Server is not running."
+    if kill -0 "$VLLM_PID" 2>/dev/null; then
+        echo "🛑 停止 vLLM (PID $VLLM_PID)"
+        kill "$VLLM_PID"
     fi
-    echo "👋 Done."
-    echo "======================================================="
 }
 trap cleanup EXIT
 
-echo "⏳ Waiting for vLLM to load model and open port $PORT..."
-start_wait=$(date +%s)
-timeout=600
-
-while true; do
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT/v1/models 2>/dev/null | grep -q "200"; then
-        echo "✅ Server is up and ready!"
-        break
-    fi
-    if ! ps -p $VLLM_PID > /dev/null 2>&1; then
-        echo "❌ vLLM process died unexpectedly. Check $VLLM_LOG for details."
-        exit 1
-    fi
-    current_time=$(date +%s)
-    elapsed=$((current_time - start_wait))
-    if [ $elapsed -ge $timeout ]; then
-        echo "❌ Timeout waiting for server to start."
-        exit 1
-    fi
-    sleep 5
-    echo -n "."
-done
+echo "⏳ 等待 vLLM 就绪 (port $VLLM_PORT)..."
+wait_for_vllm "$VLLM_PID" "$VLLM_PORT" "$VLLM_TIMEOUT"
 echo ""
 
+# --- 评估 ---
 echo "======================================================="
-echo "🧪 Starting Evaluation Runner..."
+echo "🧪 运行评估..."
 echo "======================================================="
-EVAL_CONFIG_ABS="$EVAL_EXP_DIR/$EVAL_CONFIG"
 uv run -m hardtry.utils.eval_runner "$EVAL_CONFIG_ABS"
-exit 0

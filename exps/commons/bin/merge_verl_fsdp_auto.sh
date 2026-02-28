@@ -1,50 +1,51 @@
-#!/bin/bash
-# 稳定工具：自动取 checkpoint 根目录下「最后一次保存」的 global_step_* 进行 merge。
-# 用法:
-#   bash exps/commons/bin/merge_verl_fsdp_auto.sh <CHECKPOINT_BASE> <TARGET_DIR>
-#  或: CHECKPOINT_BASE=... TARGET_DIR=... bash exps/commons/bin/merge_verl_fsdp_auto.sh
+#!/usr/bin/env bash
+# 将 checkpoint 根目录下最后一次 global_step_* 的 actor 合并到目标目录。
+# 用法: merge_verl_fsdp_auto.sh <CHECKPOINT_BASE> <TARGET_DIR>
 # 可选环境变量: PYTHON_CMD (默认 /dfs/data/uv-venv/verl/bin/python3)
 
-set -e
+set -euo pipefail
 
-if [ -n "$2" ]; then
-    CHECKPOINT_BASE="$1"
-    TARGET_DIR="$2"
-fi
+readonly PYTHON_CMD="${PYTHON_CMD:-/dfs/data/uv-venv/verl/bin/python3}"
 
-if [ -z "$CHECKPOINT_BASE" ] || [ -z "$TARGET_DIR" ]; then
+usage() {
     echo "用法: $0 <CHECKPOINT_BASE> <TARGET_DIR>"
-    echo "  或: CHECKPOINT_BASE=... TARGET_DIR=... $0"
+    echo "示例: $0 /path/to/checkpoints/verl8 /path/to/models/hardtry-4b-verl8"
     exit 1
-fi
+}
 
-PYTHON_CMD="${PYTHON_CMD:-/dfs/data/uv-venv/verl/bin/python3}"
+# 在 CHECKPOINT_BASE 下找最大的 global_step_<N> 的 N
+find_last_global_step() {
+    local base="$1"
+    local last=""
+    local d
+    for d in "$base"/global_step_*; do
+        [[ -d "$d" ]] || continue
+        local step="${d##*global_step_}"
+        [[ "$step" =~ ^[0-9]+$ ]] || continue
+        if [[ -z "$last" || "$step" -gt "$last" ]]; then
+            last="$step"
+        fi
+    done
+    echo "$last"
+}
 
-LAST_STEP=""
-for d in "${CHECKPOINT_BASE}"/global_step_*; do
-    [ -d "$d" ] || continue
-    step="${d##*global_step_}"
-    [[ "$step" =~ ^[0-9]+$ ]] || continue
-    if [ -z "$LAST_STEP" ] || [ "$step" -gt "$LAST_STEP" ]; then
-        LAST_STEP="$step"
-    fi
-done
+# --- 参数 ---
+CHECKPOINT_BASE="${1:-}"
+TARGET_DIR="${2:-}"
+[[ -n "$CHECKPOINT_BASE" && -n "$TARGET_DIR" ]] || usage
+CHECKPOINT_BASE="$(cd "$CHECKPOINT_BASE" && pwd)"
 
-if [ -z "$LAST_STEP" ]; then
-    echo "错误: 在 ${CHECKPOINT_BASE} 下未找到任何 global_step_* 目录"
-    exit 1
-fi
+LAST_STEP="$(find_last_global_step "$CHECKPOINT_BASE")"
+[[ -n "$LAST_STEP" ]] || { echo "错误: 在 $CHECKPOINT_BASE 下未找到 global_step_*" >&2; exit 1; }
 
-LOCAL_DIR="${CHECKPOINT_BASE}/global_step_${LAST_STEP}/actor"
-if [ ! -d "$LOCAL_DIR" ]; then
-    echo "错误: actor 目录不存在: ${LOCAL_DIR}"
-    exit 1
-fi
+LOCAL_DIR="$CHECKPOINT_BASE/global_step_${LAST_STEP}/actor"
+[[ -d "$LOCAL_DIR" ]] || { echo "错误: 不存在 $LOCAL_DIR" >&2; exit 1; }
 
-echo "使用最后一次保存的 checkpoint: ${LOCAL_DIR}"
-echo "合并目标: ${TARGET_DIR}"
+# --- 执行 ---
+echo "Checkpoint: $LOCAL_DIR"
+echo "目标目录:   $TARGET_DIR"
 "$PYTHON_CMD" -m verl.model_merger merge \
     --backend fsdp \
-    --local_dir "${LOCAL_DIR}" \
-    --target_dir "${TARGET_DIR}" \
+    --local_dir "$LOCAL_DIR" \
+    --target_dir "$TARGET_DIR" \
     --use_cpu_initialization

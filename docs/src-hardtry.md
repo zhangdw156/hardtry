@@ -32,7 +32,7 @@ src/hardtry/
   - `max_samples`：保留条数，-1 表示全部
 - **用法示例**：  
   `uv run python -m hardtry.utils.convert_hardgen_to_messages exps/commons/configs/convert_hardgen_to_messages_config.yaml`  
-  或由 `exps/commons/run_example.sh` 第一步调用。
+  或手动指定 `exps/commons/configs/convert_hardgen_to_messages_config.yaml`。
 
 ### convert_messages_to_verl
 
@@ -48,7 +48,7 @@ src/hardtry/
   - `max_samples`：可选，只保留前 N 条
 - **用法示例**：  
   `uv run python -m hardtry.utils.convert_messages_to_verl exps/verl7/configs/convert_messages_to_verl_config.yaml`  
-  或由各实验的 `scripts/convert_messages_to_verl.sh`、`exps/commons/run_example.sh` 第二步调用。
+  或由各实验的 `scripts/convert_messages_to_verl.sh` 调用；也可手动指定 commons 下 convert 配置。
 
 ### eval_runner
 
@@ -105,7 +105,7 @@ VeRL 训练时通过配置指定自定义 reward 模块，入口函数为 `compu
 
 ## 与 exps 的配合
 
-- **数据准备**：`run_example.sh` 调用 `convert_hardgen_to_messages` + `convert_messages_to_verl`；各实验的 convert 脚本调用 `convert_messages_to_verl`，配置放在实验目录 `configs/` 下。
+- **数据准备**：两段 convert 可手动按文档执行；各实验的 convert 脚本调用 `convert_messages_to_verl`，配置放在实验目录 `configs/` 下。
 - **评估**：`exps/commons/bin/eval_local.sh` 启动 vLLM 后调用 `hardtry.utils.eval_runner`，eval 配置由实验目录的 `configs/eval_config5.yaml` 提供。
 - **奖励**：verl7/verl8 等实验在 VeRL 配置中引用 `hardtry.rl.reward_fn_egpo`，其它 GRPO 实验可引用 `hardtry.rl.reward_fn`。
 
