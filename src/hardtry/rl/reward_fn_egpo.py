@@ -1,7 +1,10 @@
 """
 EGPO 用严格二元 reward（Hao et al. 2025）：
 仅当「格式正确（含 <tool_call>）」且「工具调用与 ground_truth 一致」时返回 1.0，否则 0.0。
-与 reward_fn.py 逻辑兼容（复用 extract_tool_calls、compare_parsed_content），仅得分为 0/1。
+
+与同目录下 reward_fn.py 的区分：
+- reward_fn.py：格式与正确性分开计分，如 0 / 0.1 / 1.0 / 1.1，用于一般 GRPO 等。
+- reward_fn_egpo.py：严格 0/1，用于 EGPO 及与 EGPO 公平对比的 GRPO（如 verl7/verl8）。
 """
 import json
 import re

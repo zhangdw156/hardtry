@@ -70,9 +70,9 @@ trainer:
   total_epochs: 1
   resume_mode: auto
 
-# 与 verl8 相同：严格二元 reward（src/gem/reward_fn_egpo.py），便于公平对比 GRPO vs EGPO
+# 与 verl8 相同：严格二元 reward（src/hardtry/rl/reward_fn_egpo.py），便于公平对比 GRPO vs EGPO
 custom_reward_function:
-  path: /dfs/data/work/hardtry/src/gem/reward_fn_egpo.py
+  path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn_egpo.py
   name: compute_score
 
 ray_init_kwargs:

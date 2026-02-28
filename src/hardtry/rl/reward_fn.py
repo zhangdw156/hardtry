@@ -1,3 +1,7 @@
+"""
+通用 tool_call 奖励：格式与正确性分开计分（如 0 / 0.1 / 1.0 / 1.1）。
+EGPO 及需要严格二元 0/1 时请使用同目录 reward_fn_egpo.py。
+"""
 import json
 import re
 from collections import Counter

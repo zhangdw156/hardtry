@@ -50,7 +50,7 @@ full7，在looptool 1k上full sft，几乎无效，甚至可能下降
 
 verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
-新增 verl7（GRPO + hardgen 1k）、verl8（EGPO + hardgen 1k），数据均为 hardgen 1k（convert 时 max_samples=1000 产出 hardgen_1k/train|test.parquet）。verl8 使用 EGPO 算法与严格二元 reward（src/gem/reward_fn_egpo.py）。为保证两实验使用完全相同的训练集与测试集，请先执行一次 convert，再分别执行两实验的 run_train_only.sh（见 exps/verl7、exps/verl8 的 README）。
+新增 verl7（GRPO + hardgen 1k）、verl8（EGPO + hardgen 1k），数据均为 hardgen 1k（convert 时 max_samples=1000 产出 hardgen_1k/train|test.parquet）。verl8 使用 EGPO 算法与严格二元 reward（src/hardtry/rl/reward_fn_egpo.py）。为保证两实验使用完全相同的训练集与测试集，请先执行一次 convert，再分别执行两实验的 run_train_only.sh（见 exps/verl7、exps/verl8 的 README）。
 
 ## 实验结果
 
@@ -318,7 +318,7 @@ verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
 > verl
 
-> GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（src/gem/reward_fn_egpo.py 严格二元）、其余共同参数一致。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
+> GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（src/hardtry/rl/reward_fn_egpo.py 严格二元）、其余共同参数一致。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
 
 实验结果
 
@@ -328,7 +328,7 @@ verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
 > verl
 
-> EGPO，hardgen 1k，与 verl7 同数据、同奖励（src/gem/reward_fn_egpo.py）、其余共同参数一致，仅 adv_estimator 为 egpo。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
+> EGPO，hardgen 1k，与 verl7 同数据、同奖励（src/hardtry/rl/reward_fn_egpo.py）、其余共同参数一致，仅 adv_estimator 为 egpo。数据一致保证：先 run 一次 convert，再分别 run_train_only.sh。
 
 实验结果
 

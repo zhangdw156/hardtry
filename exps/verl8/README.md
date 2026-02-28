@@ -16,7 +16,7 @@
 ## 算法与奖励
 
 - **算法**：`adv_estimator: egpo`，`egpo_lambda: 0.4`，`egpo_alpha: 2.0`，`norm_adv_by_std_in_grpo: true`。EGPO 在 GRPO 的 advantage 上增加裁剪后的熵项，促进探索（参见论文 *Reasoning through Exploration*, Hao et al. 2025）。
-- **奖励**：与 verl7 相同，使用 `src/gem/reward_fn_egpo.py` 的 `compute_score`（严格二元：格式正确且工具调用与 ground_truth 一致为 1.0，否则 0.0）。
+- **奖励**：与 verl7 相同，使用 `src/hardtry/rl/reward_fn_egpo.py` 的 `compute_score`（严格二元：格式正确且工具调用与 ground_truth 一致为 1.0，否则 0.0；与同目录 `reward_fn.py` 区分）。
 
 ## 配置与脚本
 
