@@ -1,5 +1,7 @@
 # verl8：EGPO 实验（hardgen 1k）
 
+实验约定与脚本用法（bin 工具、用卡数等）见 [docs/exps-commons.md](../../docs/exps-commons.md)。
+
 在 hardgen 1k 数据上使用 **EGPO**（Entropy-Guided Policy Optimization）做强化学习。与 verl7（GRPO）使用相同数据、相同奖励函数及相同共同参数，仅 advantage 估计算法为 EGPO。
 
 ## 实验目的
