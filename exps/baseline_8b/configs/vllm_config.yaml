@@ -1,4 +1,4 @@
-# 仅评估用：Qwen3-8B 原始模型，无 LoRA
+# 仅评估用：Qwen3-8B 原始模型，无 LoRA。路径与 exps/commons/configs/global.yaml 一致。
 model: "/dfs/data/models/Qwen3-8B"
 served_model_name: "Qwen/Qwen3-8B-FC"
 

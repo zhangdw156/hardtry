@@ -1,4 +1,4 @@
-# 仅用于验证 Qwen3-8B 在 BFCL multi-turn base 上的表现（无训练）
+# 仅用于验证 Qwen3-8B 在 BFCL multi-turn base 上的表现（无训练）。路径与 exps/commons/configs/global.yaml 一致。
 model_name: "Qwen/Qwen3-8B-FC"
 test_category: "multi_turn_base"
 
