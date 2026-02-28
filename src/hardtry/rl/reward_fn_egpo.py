@@ -40,18 +40,10 @@ def extract_tool_calls(input_string):
 
 
 def _extract_after_think(solution_str: str) -> str | None:
-    """
-    校验格式为 <think>...</think>...，并返回 </think> 之后的内容。
-    若不存在完整的 <think>...</think> 或 </think> 后无内容，返回 None。
-    """
-    if not solution_str or "<think>" not in solution_str or "</think>" not in solution_str:
+    delimiter = "</think>\n\n"
+    if delimiter not in solution_str:
         return None
-    # 要求 <think> 先于 </think>，且 </think> 后至少有一些内容（允许空白）
-    match = re.search(r"<think>.*?</think>\s*(.*)", solution_str, re.DOTALL)
-    if not match:
-        return None
-    after = match.group(1).strip()
-    return after if after else None
+    return solution_str.rsplit(delimiter,1)[-1]
 
 
 # 调试：前若干次调用打印输入，便于排查 verl7 critic/score/mean 恒为 0
@@ -69,12 +61,12 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
     _DEBUG_CALL_COUNT += 1
     if _DEBUG_CALL_COUNT <= _DEBUG_MAX_PRINT:
         print(
-            f"[reward_fn_egpo] call #{_DEBUG_CALL_COUNT} data_source={data_source!r} "
-            f"solution_len={len(solution_str or '')} ground_truth_len={len(str(ground_truth or ''))} "
-            f"solution_preview={(solution_str or '')[:200]!r} gt_preview={(str(ground_truth or '').strip())[:150]!r}"
+            f"[reward_fn_egpo] call #{_DEBUG_CALL_COUNT}\n"
+            f"solution_preview={solution_str!r}\n"
+            f"gt_preview={ground_truth!r}"
         )
 
-    if not (solution_str and str(ground_truth).strip()):
+    if not solution_str:
         return 0.0
 
     content_after_think = _extract_after_think(solution_str)
