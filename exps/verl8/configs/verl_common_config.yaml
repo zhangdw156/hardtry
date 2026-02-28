@@ -70,9 +70,11 @@ trainer:
   total_epochs: 1
   resume_mode: auto
 
-custom_reward_function:
-  path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn.py
-  name: compute_score
+# 必须写在 reward 下，VeRL 只读取 config.reward.custom_reward_function
+reward:
+  custom_reward_function:
+    path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn.py
+    name: compute_score
 
 ray_init_kwargs:
   runtime_env:
