@@ -1,5 +1,5 @@
-# 转换流水线用：messages → parquet。路径以 verl_config.yaml 为准，请与之同步。
-# 本文件对应 verl_config.data_input_path、data_root、base_model_path；max_samples 为实验参数。
+# 转换流水线用：messages → parquet。路径以 verl_meta_config.yaml 为准，请与之同步。
+# 本文件对应 verl_meta_config.data_input_path、data_root、base_model_path；max_samples 为实验参数。
 
 input_path: "__WORK_ROOT__/data/looptool/looptool_openai_messages_fc.jsonl"
 output_dir: "__WORK_ROOT__/data/looptool"

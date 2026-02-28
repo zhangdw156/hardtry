@@ -1,15 +1,12 @@
 """
 GRPO 用二元 reward（不要求 <think> 格式）：仅当 solution 中存在 <tool_call> 且解析后与 ground_truth 一致时 1.0，否则 0.0。
-用于 Qwen3-4B-Instruct 等不输出 <think>...</think> 的模型（如 verl9），与 reward_fn_egpo.py（要求 think 块）区分。
-"""
-
-"""
-奖励计算通用工具：工具调用解析与比较。
-供 reward_fn.py、reward_fn_egpo.py 等复用。
+适用于不输出 <think>...</think> 的模型（如 Qwen3-4B-Instruct、verl9）。需 <think> 块时用 reward_fn_egpo.py；格式+正确性分开计分用 reward_fn.py。
 """
 import json
 import re
 from collections import Counter
+
+# 工具调用解析与比较（本模块自包含，与 reward_fn_egpo 等不共享以兼容 VeRL 加载方式）
 
 
 def convert_to_hashable(data):
@@ -45,8 +42,8 @@ def extract_tool_calls(input_string):
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
     """
-    GRPO 二元奖励：不检查 <think>；对整段 solution_str 做 tool_call 解析并与 ground_truth 比较；
-    有 tool_call 且一致则 1.0，否则 0.0。与 VeRL 自定义奖励入口签名一致。
+    VeRL 自定义奖励入口。不检查 <think>，对整段 solution 做 <tool_call> 解析；
+    有 tool_call 且与 ground_truth 一致返回 1.0，否则 0.0。
     """
     if not solution_str:
         return 0.0

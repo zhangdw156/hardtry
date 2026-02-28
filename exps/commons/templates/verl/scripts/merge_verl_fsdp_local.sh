@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # scripts 在 exps/<实验名>/scripts/，上三级才是仓库根
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-# 与 verl_config.checkpoint_dir / merged_model_path 一致，使用相同占位符
+# 与 verl_meta_config.checkpoint_dir / merged_model_path 一致，使用相同占位符
 CHECKPOINT_BASE="__WORK_ROOT__/checkpoints/__EXP_NAME__"
 TARGET_DIR="__MODELS_ROOT__/hardtry-4b-__EXP_NAME__"
 

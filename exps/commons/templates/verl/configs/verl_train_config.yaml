@@ -1,22 +1,23 @@
 # =============================================================================
-# 训练配置：算法、数据、actor/rollout、trainer、reward、Ray 等；路径均引用 verl_config。
-# 由 grpo_config 引入（grpo_config → verl_train_config → verl_config）。
+# 训练配置：算法、数据、actor/rollout、trainer、reward、Ray 等；路径均引用 verl_meta_config。
+# train_local.sh 使用 --config-name=verl_train_config 直接加载本文件。
 # =============================================================================
 defaults:
   - ppo_trainer
-  - verl_config
+  - verl_meta_config
   - _self_
 
-# 从 verl_config 注入训练用元信息（hydra.searchpath 由 grpo_config 提供，此处不写避免循环解析）
-trainer:
-  experiment_name: ${verl_config.exp_name}
-  default_local_dir: ${verl_config.checkpoint_dir}
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file://__WORK_ROOT__/exps/__EXP_NAME__/configs/
 
 # -----------------------------------------------------------------------------
 # 以下为实验具体参数
 # -----------------------------------------------------------------------------
 algorithm:
   adv_estimator: grpo
+  norm_adv_by_std_in_grpo: true
   use_kl_in_reward: false
   kl_ctrl:
     type: fixed
@@ -24,8 +25,8 @@ algorithm:
 
 # 需先跑 convert_messages_to_verl 生成 train/test.parquet
 data:
-  train_files: ${verl_config.data_root}/train.parquet
-  val_files: ${verl_config.data_root}/test.parquet
+  train_files: ${verl_meta_config.data_root}/train.parquet
+  val_files: ${verl_meta_config.data_root}/test.parquet
   train_batch_size: 64
   val_batch_size: 64
   max_prompt_length: 9216
@@ -39,7 +40,7 @@ actor_rollout_ref:
   model_sharing: true
   load_on_worker: false
   model:
-    path: ${verl_config.base_model_path}
+    path: ${verl_meta_config.base_model_path}
     use_remove_padding: true
     trust_remote_code: true
     enable_gradient_checkpointing: true
@@ -74,6 +75,8 @@ actor_rollout_ref:
     dtype: bfloat16
 
 trainer:
+  experiment_name: ${verl_meta_config.exp_name}
+  default_local_dir: ${verl_meta_config.checkpoint_dir}
   project_name: hardtry
   n_gpus_per_node: 2  # 按机器修改
   nnodes: 1
@@ -87,14 +90,14 @@ trainer:
   resume_mode: auto
 
 custom_reward_function:
-  path: ${verl_config.reward_fn_path}
+  path: ${verl_meta_config.reward_fn_path}
   name: compute_score
 
 ray_init_kwargs:
   runtime_env:
     env_vars:
-      PATH: "${verl_config.venv_verl}/bin:/usr/local/bin:/usr/bin:/bin"
-      VIRTUAL_ENV: ${verl_config.venv_verl}
+      PATH: "${verl_meta_config.venv_verl}/bin:/usr/local/bin:/usr/bin:/bin"
+      VIRTUAL_ENV: ${verl_meta_config.venv_verl}
       RAY_memory_usage_threshold: 0.85
       RAY_memory_monitor_refresh_ms: 5000
       TOKENIZERS_PARALLELISM: "false"
@@ -104,4 +107,4 @@ ray_init_kwargs:
       VLLM_ALLREDUCE_USE_SYMM_MEM: "0"
       CUDA_DEVICE_MAX_CONNECTIONS: "8"
       NCCL_CUMEM_ENABLE: "1"
-  working_dir: ${verl_config.work_root}
+  working_dir: ${verl_meta_config.work_root}
