@@ -1,0 +1,24 @@
+# 评估流水线用：vLLM 服务配置。路径以 verl 占位符一致，merge 完成后为 hardtry-4b-full9。
+
+model: "/dfs/data/models/hardtry-4b-full9"
+served_model_name: "Qwen/Qwen3-4B-FC"
+
+trust_remote_code: true
+host: "0.0.0.0"
+port: 8000
+
+tensor_parallel_size: 2
+gpu_memory_utilization: 0.8
+
+max_num_seqs: 256
+max_model_len: 65536
+swap_space: 16
+
+enable_auto_tool_choice: true
+tool_call_parser: "hermes"
+
+dtype: "bfloat16"
+
+enable_lora: true
+max_loras: 1
+max_lora_rank: 128

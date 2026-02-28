@@ -77,7 +77,7 @@ def run(
 
     fmt = (output_format or "jsonl").lower()
 
-    # 按 train / test 分别输出（与 RL 同划分，SFT 训练/测试数据与 RL 一致）
+    # 按 train / test 分别输出：train.parquet → train.jsonl，test.parquet → test.jsonl（与 RL 同划分，使用时分开指定）
     if output_dir is not None:
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -85,14 +85,14 @@ def run(
             train_messages = [_row_to_messages(r) for r in train_rows]
             _write_messages_to_file(
                 train_messages,
-                out_dir / "train_openai_messages.jsonl",
+                out_dir / "train.jsonl",
                 fmt=fmt,
             )
         if test_rows:
             test_messages = [_row_to_messages(r) for r in test_rows]
             _write_messages_to_file(
                 test_messages,
-                out_dir / "test_openai_messages.jsonl",
+                out_dir / "test.jsonl",
                 fmt=fmt,
             )
         return str(out_dir)
@@ -128,7 +128,7 @@ def main():
         "--output_dir",
         type=str,
         default=None,
-        help="按 train/test 分别输出到该目录（train_openai_messages.jsonl、test_openai_messages.jsonl），与 RL 同划分，供 SFT 训练/评估使用",
+        help="按 train/test 分别输出到该目录：train.parquet→train.jsonl，test.parquet→test.jsonl，与 RL 同划分，SFT 中分开指定",
     )
     ap.add_argument(
         "--format",
