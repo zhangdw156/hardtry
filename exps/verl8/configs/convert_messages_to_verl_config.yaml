@@ -1,0 +1,10 @@
+# verl8: hardgen 1k，与 verl7 共用同一份 parquet（hardgen_1k）
+input_path: "/dfs/data/work/hardtry/data/hardgen/hardgen_openai_messages_fc.json"
+output_dir: "/dfs/data/work/hardtry/data/hardgen_1k"
+model_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
+test_size: 0.05
+seed: 42
+num_proc: 8
+data_source: "hardgen"
+ability: "function_call"
+max_samples: 1000

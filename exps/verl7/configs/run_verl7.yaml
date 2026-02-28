@@ -1,0 +1,13 @@
+# 已废弃：一条龙改由 run_local.sh 按序执行 scripts/*.sh。本文件仅保留作步骤参考。
+# 步骤: convert → train → merge → eval
+
+tasks:
+  - type: module
+    module: hardtry.utils.convert_messages_to_verl
+    config: exps/verl7/configs/convert_messages_to_verl_config.yaml
+  - type: command
+    command: ["bash", "exps/verl7/scripts/train_local.sh"]
+  - type: command
+    command: ["bash", "exps/verl7/scripts/merge_verl_fsdp_local.sh"]
+  - type: command
+    command: ["bash", "exps/verl7/scripts/eval_local.sh"]

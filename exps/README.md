@@ -50,6 +50,8 @@ full7，在looptool 1k上full sft，几乎无效，甚至可能下降
 
 verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
+新增 verl7（GRPO + hardgen 1k）、verl8（EGPO + hardgen 1k），数据均为 hardgen 1k（convert 时 max_samples=1000 产出 hardgen_1k/train|test.parquet）。verl8 使用 EGPO 算法与严格二元 reward（reward_fn_egpo.py）。
+
 ## 实验结果
 
 ### lora1(似乎没有效果)
@@ -254,7 +256,7 @@ verl6，在looptool 1k上full rl，几乎无效，但没有下降
 
 > ms-swift
 
-> hardgen 1k
+> hardgen 100
 
 > all response -> loss
 
@@ -311,3 +313,23 @@ verl6，在looptool 1k上full rl，几乎无效，但没有下降
 - 28.00%
 - 27.50%
 - 26.50%
+
+### verl7
+
+> verl
+
+> GRPO 对照组，hardgen 1k，与 verl8 同数据、同奖励（src/gem/reward_fn_egpo.py 严格二元）、其余共同参数一致
+
+实验结果
+
+- （待跑）
+
+### verl8
+
+> verl
+
+> EGPO，hardgen 1k，与 verl7 同数据、同奖励（src/gem/reward_fn_egpo.py）、其余共同参数一致，仅 adv_estimator 为 egpo
+
+实验结果
+
+- （待跑）

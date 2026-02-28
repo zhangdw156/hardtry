@@ -1,0 +1,14 @@
+# 与 egpo_config 二选一；verl8 默认用 egpo_config 训练
+defaults:
+  - ppo_trainer
+  - verl_common_config
+  - _self_
+
+trainer:
+  experiment_name: verl8_grpo
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl8_grpo
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file:///dfs/data/work/hardtry/exps/verl8/configs/
