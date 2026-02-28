@@ -8,7 +8,7 @@ trust_remote_code: true
 host: "0.0.0.0"
 port: 8000
 
-tensor_parallel_size: 2
+tensor_parallel_size: 4
 gpu_memory_utilization: 0.8
 
 max_num_seqs: 256
