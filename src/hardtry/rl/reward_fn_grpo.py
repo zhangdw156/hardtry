@@ -2,7 +2,45 @@
 GRPO 用二元 reward（不要求 <think> 格式）：仅当 solution 中存在 <tool_call> 且解析后与 ground_truth 一致时 1.0，否则 0.0。
 用于 Qwen3-4B-Instruct 等不输出 <think>...</think> 的模型（如 verl9），与 reward_fn_egpo.py（要求 think 块）区分。
 """
-from .reward_utils import compare_parsed_content, extract_tool_calls
+
+"""
+奖励计算通用工具：工具调用解析与比较。
+供 reward_fn.py、reward_fn_egpo.py 等复用。
+"""
+import json
+import re
+from collections import Counter
+
+
+def convert_to_hashable(data):
+    """将 dict/list 转为可哈希类型，用于忽略顺序的比较。"""
+    if isinstance(data, dict):
+        return frozenset(
+            (key, convert_to_hashable(value)) for key, value in data.items()
+        )
+    if isinstance(data, list):
+        return frozenset(convert_to_hashable(item) for item in data)
+    return data
+
+
+def compare_parsed_content(parsed1, parsed2):
+    """比较两个工具调用列表，忽略顺序。"""
+    counter1 = Counter([convert_to_hashable(item) for item in parsed1])
+    counter2 = Counter([convert_to_hashable(item) for item in parsed2])
+    return counter1 == counter2
+
+
+def extract_tool_calls(input_string):
+    """从文本中提取 <tool_call> 标签内的 JSON 内容。"""
+    pattern = r"<tool_call>(.*?)</tool_call>"
+    matches = re.findall(pattern, input_string, re.DOTALL)
+    result = []
+    for match in matches:
+        try:
+            result.append(json.loads(match))
+        except Exception:
+            result.append(match)
+    return result
 
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):

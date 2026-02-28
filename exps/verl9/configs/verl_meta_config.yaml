@@ -1,0 +1,37 @@
+# =============================================================================
+# 实验元信息（路径、环境、实验名）。训练/评估/转换等均以此为准，vllm_config、
+# eval_config5、convert_messages_to_verl_config 中路径请与本文件保持一致。
+# =============================================================================
+# new_exp.sh 会替换 verl9；其余占位符需在实验目录中手动替换一次。
+# -----------------------------------------------------------------------------
+
+verl_meta_config:
+  # 实验名（new_exp.sh 自动替换）
+  exp_name: verl9
+
+  # 按环境修改：工作/仓库根路径
+  work_root: /dfs/data/work/hardtry
+
+  # 按环境修改：模型根路径
+  models_root: /dfs/data/models
+
+  # 按环境修改：verl 训练用虚拟环境路径
+  venv_verl: /dfs/data/uv-venv/verl
+
+  # 按环境修改：评估用虚拟环境路径（如 gorilla）
+  venv_gorilla: /dfs/data/uv-venv/gorilla
+
+  # 以下为派生路径，一般无需改（由上面四个 + exp_name 决定）
+  checkpoint_dir: /dfs/data/work/hardtry/checkpoints/verl9
+  exps_config_dir: /dfs/data/work/hardtry/exps/verl9/configs
+  eval_summary_dir: /dfs/data/work/hardtry/exps/verl9/eval5_results
+  eval_artifact_dir: /dfs/data/work/hardtry/eval_results
+  reward_fn_path: /dfs/data/work/hardtry/src/hardtry/rl/reward_fn_grpo.py
+
+  # 按实验修改：base 模型（convert/训练用）；merge 后推理用 merged_model_path
+  base_model_path: /dfs/data/models/Qwen3-4B-Instruct-2507
+  merged_model_path: /dfs/data/models/hardtry-4b-verl9
+
+  # 按实验修改：数据根目录（parquet 与 convert 输出）。与 verl7/verl8 共用 hardgen_1k
+  data_root: /dfs/data/work/hardtry/data/hardgen_1k
+  data_input_path: /dfs/data/work/hardtry/data/hardgen/hardgen_openai_messages_fc.json
