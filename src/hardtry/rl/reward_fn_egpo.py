@@ -6,14 +6,14 @@ EGPO 用严格二元 reward（Hao et al. 2025）：
 - reward_fn.py：格式与正确性分开计分，如 0 / 0.1 / 1.0 / 1.1，用于一般 GRPO 等。
 - reward_fn_egpo.py：严格 0/1，用于 EGPO 及与 EGPO 公平对比的 GRPO（如 verl7/verl8）。
 """
-from hardtry.rl.reward_utils import compare_parsed_content, extract_tool_calls
+from .reward_utils import compare_parsed_content, extract_tool_calls
 
 
 def _extract_after_think(solution_str: str) -> str | None:
     delimiter = "</think>\n\n"
     if delimiter not in solution_str:
         return None
-    return solution_str.rsplit(delimiter,1)[-1]
+    return solution_str.rsplit(delimiter, 1)[-1]
 
 
 # 调试：前若干次调用打印输入，便于排查 verl7 critic/score/mean 恒为 0

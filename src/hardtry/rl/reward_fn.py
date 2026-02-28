@@ -2,7 +2,7 @@
 通用 tool_call 奖励：格式与正确性分开计分（如 0 / 0.1 / 1.0 / 1.1）。
 EGPO 及需要严格二元 0/1 时请使用同目录 reward_fn_egpo.py。
 """
-from hardtry.rl.reward_utils import compare_parsed_content, extract_tool_calls
+from .reward_utils import compare_parsed_content, extract_tool_calls
 
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
