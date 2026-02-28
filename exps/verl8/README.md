@@ -31,8 +31,8 @@
 | `configs/eval_config5.yaml` | 评估配置（结果输出到本实验目录） |
 | `scripts/convert_messages_to_verl.sh` | 执行一次 convert，生成 hardgen_1k |
 | `scripts/train_local.sh` | 调用 verl.main_ppo，**config-name=egpo_config** |
-| `scripts/merge_verl_fsdp_local.sh` | 转调 commons/bin/merge_verl_fsdp_auto.sh，将 checkpoint 合并为单模型 |
-| `scripts/eval_local.sh` | 转调 commons/bin/eval_local.sh，启动 vLLM 并跑评估 |
+| `scripts/merge_verl_fsdp_local.sh` | 转调 commons/sbin/merge_verl_fsdp_auto.sh，将 checkpoint 合并为单模型 |
+| `scripts/eval_local.sh` | 转调 commons/sbin/eval_local.sh，启动 vLLM 并跑评估 |
 
 ## 如何运行
 
