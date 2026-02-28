@@ -10,8 +10,7 @@ src/hardtry/
 ├── utils/               # 工具模块
 │   ├── convert_hardgen_to_messages.py   # BFCL/hardgen 原始数据 → OpenAI messages JSON
 │   ├── convert_messages_to_verl.py     # messages JSON → VeRL parquet（含 reward 结构）
-│   ├── eval_runner.py                   # 并行 BFCL 评估（generate + evaluate + 结果汇总）
-│   └── merge.py                         # LoRA/DoRA 权重合并回基座并保存
+│   └── eval_runner.py                   # 并行 BFCL 评估（generate + evaluate + 结果汇总）
 └── rl/                  # 强化学习奖励
     ├── reward_fn.py     # 通用 tool_call 奖励（格式 + 正确性分开计分）
     ├── reward_fn_egpo.py # EGPO 用严格二元奖励（<think> 格式 + AST 全对才 1 分）
@@ -63,22 +62,6 @@ src/hardtry/
 - **用法示例**：  
   先由 `exps/commons/sbin/eval_local.sh <实验目录>` 启动 vLLM，再在脚本内部调用：  
   `uv run -m hardtry.utils.eval_runner "$EVAL_CONFIG_ABS"`（EVAL_CONFIG 一般为该实验的 `configs/eval_config5.yaml`）。
-
-### merge（LoRA/DoRA 合并）
-
-将 LoRA/DoRA 权重合并回基座模型并保存为完整权重，便于单独部署。
-
-- **入口**：`python -m hardtry.utils.merge [config.yaml]` 或命令行传参。
-- **参数**：
-  - `base_model_path`：基座模型路径
-  - `lora_path`：LoRA/DoRA 权重路径
-  - `output_path`：合并后模型保存路径
-  - `device`、`torch_dtype`：可选，加载设备与精度。
-- **用法示例**：  
-  `uv run python -m hardtry.utils.merge --base_model_path /path/to/base --lora_path /path/to/lora --output_path /path/to/merged`  
-  或传入 YAML（若实现支持）：  
-  `uv run python -m hardtry.utils.merge merge_config.yaml`  
-  注意：VeRL 实验通常使用 `exps/commons/sbin/merge_verl_fsdp_auto.sh` 做 FSDP checkpoint merge，与本模块的 LoRA merge 场景不同。
 
 ---
 
