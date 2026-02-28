@@ -25,7 +25,7 @@
 | `configs/verl_common_config_egpo.yaml` | EGPO 算法配置、数据路径、奖励函数等（主用） |
 | `configs/egpo_config.yaml` | Hydra 入口，experiment_name=verl8，checkpoint 目录 |
 | `configs/convert_messages_to_verl_config.yaml` | hardgen → hardgen_1k parquet 的转换配置 |
-| `configs/vllm_config4.yaml` | 评估时 vLLM 服务配置（model 指向 merge 后的权重） |
+| `configs/vllm_config.yaml` | 评估时 vLLM 服务配置（model 指向 merge 后的权重；卡数由 set_exp_gpus.sh 管理） |
 | `configs/eval_config5.yaml` | 评估配置（结果输出到本实验目录） |
 | `scripts/convert_messages_to_verl.sh` | 执行一次 convert，生成 hardgen_1k |
 | `scripts/train_local.sh` | 调用 verl.main_ppo，**config-name=egpo_config** |

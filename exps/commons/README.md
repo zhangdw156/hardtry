@@ -14,7 +14,7 @@
 ## 实验各步骤用卡数
 
 - **训练（verl）**：由该实验下的 `verl_common_config.yaml`（及若存在的 `verl_common_config_egpo.yaml`）中的 `actor_rollout_ref.num_workers`、`trainer.n_gpus_per_node`、`trainer.nnodes` 控制；脚本会固定 `nnodes: 1`，仅改前两者为「训练用卡数」。
-- **评估（vLLM）**：由该实验下的 vLLM 配置（`vllm_config4.yaml` 或 `vllm_config.yaml`）中的 `tensor_parallel_size` 控制。
+- **评估（vLLM）**：由该实验下的 vLLM 配置（`vllm_config.yaml` 或兼容旧实验的 `vllm_config4.yaml`）中的 `tensor_parallel_size` 控制，卡数可由 set_exp_gpus.sh 统一修改。
 - 默认值（在未传参时使用）来自 **configs/default_exp_resources.yaml**（`train_n_gpus`、`eval_tensor_parallel_size`），可一次改齐所有实验的默认用卡再批量跑脚本。
 
 ## bin/ 稳定工具
@@ -24,7 +24,7 @@
   若省略后两个参数，从 `exps/commons/configs/default_exp_resources.yaml` 读取默认值。  
   会改写该实验目录下 **configs/** 与 **conf/**（若存在）中的：  
   - `verl_common_config.yaml`、`verl_common_config_egpo.yaml`：`num_workers`、`n_gpus_per_node`、`nnodes`（nnodes 固定为 1）；  
-  - `vllm_config4.yaml`、`vllm_config.yaml`：`tensor_parallel_size`。  
+  - `vllm_config.yaml`、`vllm_config4.yaml`（兼容）：`tensor_parallel_size`。  
   适用范围：verl 实验会同时改训练与评估；swift/full/lora 等仅有 vLLM 配置的会只改评估用卡。
 
 - **bin/eval_local.sh**  
@@ -45,11 +45,11 @@
 
 - **templates/verl/**  
   Verl（GRPO）实验骨架：`configs/`、`scripts/`、`run_local.sh`。  
-  复制后需在 `configs/` 中补齐 `grpo_config.yaml`、`verl_common_config.yaml`、`convert_messages_to_verl_config.yaml`、`vllm_config4.yaml`、`eval_config5.yaml` 等（参考 `exps/verl6/configs`）。
+  复制后需在 `configs/` 中补齐 `grpo_config.yaml`、`verl_common_config.yaml`、`convert_messages_to_verl_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml` 等（参考 `exps/verl6/configs`）；新实验推荐用 `vllm_config.yaml`（卡数由 set_exp_gpus.sh 管理）。
 
 - **templates/swift/**  
   ms-swift SFT 实验骨架：`configs/`、`scripts/`、`run_local.sh`。  
-  复制后需在 `configs/` 中补齐 `sft_config.yaml`、`vllm_config4.yaml`、`eval_config5.yaml`（参考 `exps/full5/configs`），并修改 `scripts/merge_swift_fsdp_local.sh` 中的 `CKPT_PATH` 为本次训练的 checkpoint 路径。
+  复制后需在 `configs/` 中补齐 `sft_config.yaml`、`vllm_config.yaml`、`eval_config5.yaml`（参考 `exps/full5/configs`），并修改 `scripts/merge_swift_fsdp_local.sh` 中的 `CKPT_PATH` 为本次训练的 checkpoint 路径。
 
 ## 约定
 

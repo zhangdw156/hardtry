@@ -63,7 +63,7 @@ case "$TEMPLATE_TYPE" in
         ;;
     swift)
         echo "已生成实验目录: $EXP_DIR"
-        echo "请到 $EXP_DIR/configs 补齐 sft_config.yaml、vllm_config4.yaml、eval_config5.yaml（参考 exps/full5/configs），"
+        echo "请到 $EXP_DIR/configs 补齐 sft_config.yaml、vllm_config.yaml、eval_config5.yaml（参考 exps/full5/configs），"
         echo "并修改 scripts/merge_swift_fsdp_local.sh 中的 CKPT_PATH，再执行: bash exps/$EXP_NAME/run_local.sh"
         ;;
 esac

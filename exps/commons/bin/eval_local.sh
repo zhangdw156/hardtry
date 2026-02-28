@@ -17,9 +17,13 @@ if [ -f "/dfs/data/sbin/setup.sh" ]; then
     source /dfs/data/sbin/setup.sh
 fi
 
-# 统一使用 configs 目录
+# 统一使用 configs 目录；vllm 配置优先 vllm_config.yaml（卡数由 set_exp_gpus.sh 管理），兼容旧实验的 vllm_config4.yaml
 mkdir -p logs
-VLLM_CONFIG="configs/vllm_config4.yaml"
+if [ -f "configs/vllm_config.yaml" ]; then
+    VLLM_CONFIG="configs/vllm_config.yaml"
+else
+    VLLM_CONFIG="configs/vllm_config4.yaml"
+fi
 EVAL_CONFIG="configs/eval_config5.yaml"
 VLLM_LOG="logs/vllm_server.log"
 PORT=8000
