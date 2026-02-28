@@ -25,13 +25,14 @@
 
 | 文件 / 脚本 | 说明 |
 |-------------|------|
-| `configs/verl_config.yaml` | 实验元信息：数据根 hardgen_1k、reward_fn_grpo、base 模型 Instruct |
-| `configs/verl_common_config.yaml` | 算法、数据路径、actor/rollout、trainer、奖励引用等 |
+| `configs/verl_config.yaml` | 实验元信息：数据根、reward 路径、base 模型等（被 verl_train_config 引用） |
+| `configs/verl_train_config.yaml` | 训练配置：算法、数据、actor/rollout、trainer 等，引用 verl_config |
+| `configs/grpo_config.yaml` | 入口：由 train_local.sh 加载，引入 verl_train_config 并指定本实验目录 |
 | `configs/convert_messages_to_verl_config.yaml` | hardgen → hardgen_1k 转换配置（与 verl7 一致） |
 | `configs/vllm_config.yaml` | 评估时 vLLM 配置（model 指向 merge 后权重） |
 | `configs/eval_config5.yaml` | 评估配置 |
 | `scripts/convert_messages_to_verl.sh` | 执行一次 convert（与 verl7/verl8 共用输出目录即可） |
-| `scripts/train_local.sh` | GRPO 训练，config-name=verl_common_config |
+| `scripts/train_local.sh` | GRPO 训练，config-name=grpo_config |
 | `scripts/merge_verl_fsdp_local.sh` | 合并 checkpoint 为单模型 |
 | `scripts/eval_local.sh` | 转调 commons/sbin/eval_local.sh |
 | `run_train_only.sh` | 仅 train → merge → eval（不 convert），用于与 verl7/verl8 共数据对比 |

@@ -1,6 +1,6 @@
 # =============================================================================
-# 实验具体参数（算法、数据、训练超参、Ray 等）；同时为 Hydra 训练入口。
-# 路径类均引用 verl_config；train_local.sh 使用 --config-name=verl_common_config。
+# 训练配置：算法、数据、actor/rollout、trainer、reward、Ray 等；路径均引用 verl_config。
+# 由 grpo_config 引入（grpo_config → verl_train_config → verl_config）。
 # =============================================================================
 defaults:
   - ppo_trainer

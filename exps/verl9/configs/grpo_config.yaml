@@ -1,0 +1,14 @@
+# 入口配置：指定本实验 identity 与 searchpath，引入 verl_train_config（训练配置）。
+defaults:
+  - ppo_trainer
+  - verl_train_config
+  - _self_
+
+trainer:
+  experiment_name: verl9
+  default_local_dir: /dfs/data/work/hardtry/checkpoints/verl9
+
+hydra:
+  searchpath:
+    - pkg://verl/trainer/config/
+    - file:///dfs/data/work/hardtry/exps/verl9/configs/
