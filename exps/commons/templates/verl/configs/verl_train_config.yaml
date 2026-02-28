@@ -7,15 +7,10 @@ defaults:
   - verl_config
   - _self_
 
-# 从 verl_config 注入训练用元信息
+# 从 verl_config 注入训练用元信息（hydra.searchpath 由 grpo_config 提供，此处不写避免循环解析）
 trainer:
   experiment_name: ${verl_config.exp_name}
   default_local_dir: ${verl_config.checkpoint_dir}
-
-hydra:
-  searchpath:
-    - pkg://verl/trainer/config/
-    - file://${verl_config.exps_config_dir}
 
 # -----------------------------------------------------------------------------
 # 以下为实验具体参数
