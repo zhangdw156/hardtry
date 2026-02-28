@@ -2,42 +2,7 @@
 通用 tool_call 奖励：格式与正确性分开计分（如 0 / 0.1 / 1.0 / 1.1）。
 EGPO 及需要严格二元 0/1 时请使用同目录 reward_fn_egpo.py。
 """
-import json
-import re
-from collections import Counter
-
-
-def compare_parsed_content(parsed1, parsed2):
-    """比较两个工具调用列表，忽略顺序。"""
-
-    def convert_to_hashable(data):
-        if isinstance(data, dict):
-            return frozenset(
-                (key, convert_to_hashable(value)) for key, value in data.items()
-            )
-        elif isinstance(data, list):
-            return frozenset(convert_to_hashable(item) for item in data)
-        else:
-            return data
-
-    counter1 = Counter([convert_to_hashable(item) for item in parsed1])
-    counter2 = Counter([convert_to_hashable(item) for item in parsed2])
-    return counter1 == counter2
-
-
-def extract_tool_calls(input_string):
-    """从文本中提取 <tool_call> 标签内的 JSON 内容。"""
-    pattern = r"<tool_call>(.*?)</tool_call>"
-    matches = re.findall(pattern, input_string, re.DOTALL)
-
-    result = []
-    for match in matches:
-        try:
-            result.append(json.loads(match))
-        except Exception:
-            # 如果 JSON 格式非法，放入原字符串后续匹配会失败
-            result.append(match)
-    return result
+from hardtry.rl.reward_utils import compare_parsed_content, extract_tool_calls
 
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
