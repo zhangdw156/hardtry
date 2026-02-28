@@ -1,6 +1,5 @@
 #!/bin/bash
-# 唯一入口：在实验目录下按顺序执行各步骤脚本，不再使用 run.py。
-# 模板占位符 verl7 由 new_exp.sh 替换。
+# 唯一入口：在实验目录下按顺序执行各步骤脚本（与 exps/commons 约定一致）。
 
 set -e
 EXP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
