@@ -1,0 +1,24 @@
+Experiment Name,Framework,Method,Dataset,Mean (%),Result 1 (%),Result 2 (%),Result 3 (%),Result 4 (%),Result 5 (%),Status,Notes,Base Model,Additional Info
+lora1,ms-swift,SFT 使用所有回复计算loss,hardgen 14k,26.5,26.5,27,27,26.5,25.5,已完成,似乎没有效果,,,
+lora2,ms-swift,SFT 使用最后一轮回复计算loss,hardgen 14k,26,26.5,24.5,26.5,27,25.5,已完成,似乎没有效果,,,
+verl1,verl,GRPO强化学习,hardgen 14k,45.7,45,45.5,45.5,45.5,47,已完成,有效,,,
+verl2,verl,带lora的GRPO强化学习,hardgen 14k,26.6,26,27.5,26.5,26.5,26.5,已完成,几乎没有提升,,,
+full1,ms-swift,全量SFT 所有回复计算loss,hardgen 14k,23.5,24.5,23.5,23,24,22.5,已完成,无效甚至降低,,,
+full2,ms-swift,全量SFT 最后一轮回复计算loss,hardgen 14k,10.7,10.5,11,10.5,10.5,11,已完成,效果最差,,,
+baseline,,用于对照,,27.1,26.5,26.5,26.5,27.5,27.5,已完成,用于对照,,,
+baseline_4bthinking,,零样本表现（无训练）,,60,60,62,57,62,59,已完成,Qwen3-4B-Thinking-2507 在BFCL multi-turn base上的零样本表现,Qwen3-4B-Thinking-2507,,
+full4,ms-swift,all response -> loss,hardgen 14k,47.3,47,47.5,47.5,47,47.5,已完成,,,,
+full3,ms-swift,all response -> loss,gem 5k,12.7,13,12.5,13,13,12,已完成,,,,
+verl3,verl,,gem 5k,0.4,0.5,0,0.5,0.5,0.5,已完成,,,,
+verl5,verl,,gem 2k,2,2,2,2,2,2,已完成,,,,
+lora3,ms-swift,lora all response -> loss,hardgen 14k,26.5,26.5,26.5,26,27,26.5,已完成,,,,
+verl4,verl,,hardgen 14k,42.6,43.5,42.5,41.5,43,42.5,已完成,,,,
+full5,ms-swift,all response -> loss,hardgen 1k,37.8,38,38.5,38,37,37.5,已完成,multi turn base,Qwen3-4B-Instruct,,
+full6,ms-swift,all response -> loss,hardgen 100,30.5,30,31,30.5,30.5,30.5,已完成,multi turn base,Qwen3-4B-Instruct,,
+full7,ms-swift,all response -> loss,looptool 1k,26.2,25,27,25.5,27.5,26,已完成,几乎无效甚至可能下降,,,
+verl6,verl,,looptool 1k,27.5,28.5,27,28,27.5,26.5,已完成,几乎没有下降,,,
+verl7,verl,GRPO,hardgen 1k,61.7,63,63,60.5,63,59,已完成,multi turn base，与verl8同数据同奖励同参数,Qwen3-4B-Thinking-2507,reward_fn_grpo 严格二元
+verl8,verl,EGPO,hardgen 1k,61.9,61,62,61,62.5,63,已完成,multi turn base，与verl7同数据同奖励同参数，仿adv_estimator的egpo,Qwen3-4B-Thinking-2507,"reward_fn_egpo 严格二元 注意：使用了错误的EGPO实现（整个response熵而非CoT熵）"
+verl9,verl,GRPO,hardgen 1k,,,,,,,未完成,与verl7/8同数据同奖励,Qwen3-4B-Instruct-2507,reward_fn_grpo（不要求think块）
+full8,ms-swift,全量 SFT,hardgen 1k,,,,,,,未完成,与RL同数据,Qwen3-4B-Thinking,template qwen3
+full9,ms-swift,全量 SFT,hardgen 1k,25.8,26.5,25.5,25.5,25.5,26,已完成,multi turn base，与RL同数据,Qwen3-4B-Instruct,template qwen3_nothinking
