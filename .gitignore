@@ -7,3 +7,4 @@ swanlog/
 __pycache__/
 logs/
 outputs/
+.DS_Store

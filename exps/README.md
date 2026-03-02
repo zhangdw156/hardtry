@@ -95,7 +95,7 @@ verl10，4b-thinking，grpo，reward_fn_grpo
 verl11，4b-thinking，egpo，reward_fn_egpo
 verl12，4b-instruct，grpo，reward_fn_grpo
 full11，4b-thinking，sft
-full12，4b-instruct，sft
+full10，4b-instruct，sft
 
 ## 实验结果
 
