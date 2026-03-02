@@ -9,7 +9,7 @@ venv_activate_path: "/dfs/data/uv-venv/gorilla/bin/activate"
 remote_openai_tokenizer_path: "/dfs/data/models/Qwen3-4B-Thinking-2507"
 
 num_runs: 5
-threads_per_run: 32
+threads_per_run: 8
 
 remote_openai_base_url: "http://localhost:8000/v1"
 remote_openai_api_key: "EMPTY"
