@@ -25,7 +25,7 @@ verl9,verl,GRPO,hardgen 1k,25.2,25.5,26,25,25,24.5,已完成,4B-Instruct + GRPO 
 full8,ms-swift,SFT & all response -> loss,hardgen 1k,6.9,8,5.5,8,7,6,已完成,4B-Thinking + SFT + template qwen3；6.9% 异常差，疑 template/CoT 对齐或数据格式问题，待查,Qwen3-4B-Thinking-2507,2026-03-02
 full9,ms-swift,SFT & all response -> loss,hardgen 1k,25.8,26.5,25.5,25.5,25.5,26,已完成,4B-Instruct + SFT（convert→parquet→jsonl 同 RL 数据）；25.8% 略低于 baseline。与 full5 差异在数据划分/预处理,Qwen3-4B-Instruct-2507,2026-02-28
 verl10,verl,GRPO,hardgen_1k_shuffle,60.5,62.5,59.5,62,59.5,60,已完成,4B-Thinking + reward_fn_grpo；60.5% 与同基座 baseline_4bthinking（约 60%）持平略高；与 full10/full11 同数据,Qwen3-4B-Thinking-2507,2026-03-02
-verl11,verl,EGPO,hardgen_1k_shuffle,,,,,,,未完成,4B-Thinking + reward_fn_egpo（修正后）；与 verl10/12 同数据,Qwen3-4B-Thinking-2507,
+verl11,verl,EGPO,hardgen_1k_shuffle,62.1,63,62,61.5,62.5,61.5,已完成,4B-Thinking + reward_fn_egpo（修正后）；62.1% 与 verl10（GRPO 60.5%）同数据，EGPO 略高；与 verl10/12 同数据,Qwen3-4B-Thinking-2507,2026-03-02
 verl12,verl,GRPO,hardgen_1k_shuffle,,,,,,,未完成,4B-Instruct + reward_fn_grpo；与 verl10/11 同数据，对比 Instruct vs Thinking 基座,Qwen3-4B-Instruct-2507,
 full10,ms-swift,SFT & all response -> loss,hardgen_1k_shuffle,45.6,45.5,46.5,44.5,46.5,45,已完成,4B-Instruct SFT；45.6% 明显高于同基座 baseline_4binstruct（约 27%）；与 verl10/11/12 同数据,Qwen3-4B-Instruct-2507,2026-03-02
 full11,ms-swift,SFT & all response -> loss,hardgen_1k_shuffle,36.2,36.5,35.5,36,37,36,已完成,4B-Thinking SFT；36.2% 明显低于同基座 baseline_4bthinking（约 60%），SFT 在该数据上拉低 Thinking 零样本表现；同数据下 verl10（GRPO）60.5% 保持基座水平,Qwen3-4B-Thinking-2507,2026-03-02
