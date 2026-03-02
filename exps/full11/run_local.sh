@@ -13,7 +13,7 @@ fi
 echo "=========================================="
 echo "步骤 1/3: train (SFT)"
 echo "=========================================="
-bash scripts/train_local.sh
+# bash scripts/train_local.sh
 
 echo "=========================================="
 echo "步骤 2/3: merge"
