@@ -91,6 +91,7 @@ def run(cfg):
     # 保留条数限制
     if max_samples is not None and max_samples > 0:
         n = min(int(max_samples), len(ds))
+        # TODO: 添加一个开关，判断是否打乱数据ds = ds.shuffle(seed=42)
         ds = ds.select(range(n))
         print(f"已限制为前 {n} 条数据（max_samples={max_samples}）")
 
