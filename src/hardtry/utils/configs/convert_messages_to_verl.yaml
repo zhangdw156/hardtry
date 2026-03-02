@@ -20,3 +20,6 @@ ability: "function_call"
 
 # 保留多少条数据：null 表示全部保留；设为正整数则只保留前 N 条再划分 train/test
 max_samples: null
+
+# 在限制 max_samples 时是否先打乱数据；为 true 时取随机子集，为 false 时取前 N 条
+shuffle: false

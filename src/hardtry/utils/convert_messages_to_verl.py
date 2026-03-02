@@ -84,6 +84,7 @@ def run(cfg):
     data_source = cfg.get("data_source", "sloop")
     ability = cfg.get("ability", "function_call")
     max_samples = cfg.get("max_samples")
+    shuffle = cfg.get("shuffle", False)
 
     print(f"开始加载数据集: {input_path}")
     ds = load_dataset("json", data_files=input_path, split="train")
@@ -91,9 +92,10 @@ def run(cfg):
     # 保留条数限制
     if max_samples is not None and max_samples > 0:
         n = min(int(max_samples), len(ds))
-        # TODO: 添加一个开关，判断是否打乱数据ds = ds.shuffle(seed=42)
+        if shuffle:
+            ds = ds.shuffle(seed=seed)
         ds = ds.select(range(n))
-        print(f"已限制为前 {n} 条数据（max_samples={max_samples}）")
+        print(f"已限制为 {n} 条数据（max_samples={max_samples}, shuffle={shuffle}）")
 
     # 1. 划分数据集
     split_ds = ds.train_test_split(test_size=test_size, seed=seed)
