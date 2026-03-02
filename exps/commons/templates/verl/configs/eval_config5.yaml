@@ -9,6 +9,7 @@ experiment_name: "__EXP_NAME___parallel_5runs"
 summary_output_dir: "__WORK_ROOT__/exps/__EXP_NAME__/eval5_results"
 
 venv_activate_path: "__VENV_GORILLA__/bin/activate"
+# 与 verl_meta_config.base_model_path 一致：若为 4B-Thinking，请改为 __MODELS_ROOT__/Qwen3-4B-Thinking-2507
 remote_openai_tokenizer_path: "__MODELS_ROOT__/Qwen3-4B-Instruct-2507"
 
 num_runs: 5
