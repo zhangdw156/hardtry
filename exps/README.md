@@ -99,6 +99,11 @@ full10，4b-instruct，sft
 
 实验结果见 exps/RESULT.csv。
 
+**full10、full11、verl10 已完成**（26-03-02 数据 hardgen_1k_shuffle，5 轮 multi turn base；对比均为**同基座**零样本 baseline）：
+- **verl10**（4B-Thinking + GRPO + reward_fn_grpo）：均值 **60.5%**（62.5, 59.5, 62, 59.5, 60），与同基座 **baseline_4bthinking**（约 60%）持平略高。
+- **full10**（4B-Instruct + SFT）：均值 **45.6%**（45.5, 46.5, 44.5, 46.5, 45），明显高于同基座 **baseline_4binstruct**（约 27%）。
+- **full11**（4B-Thinking + SFT）：均值 **36.2%**（36.5, 35.5, 36, 37, 36），明显低于同基座 **baseline_4bthinking**（约 60%），即 SFT 在该数据上拉低了 Thinking 零样本表现；同数据下 verl10（GRPO）60.5% 保持基座水平。
+
 **full8 重跑评测说明**：full8 训练基座为 4B-Thinking，此前 merge 脚本误用 4B-Instruct 作为 BASE_MODEL_PATH，导致合并目录中 tokenizer/config 来自 Instruct，eval_config5 的 remote_openai_tokenizer_path 也为 Instruct。二者均可能导致评测异常差（当前约 6.9%）。已修复 eval_config5；合并目录需用 Thinking 基座重新覆盖 tokenizer 与 config 后**重跑评测**。操作示例：`MERGED_DIR=/dfs/data/models/hardtry-4b-full8`，从 `Qwen3-4B-Thinking-2507` 拷贝 tokenizer.json、tokenizer_config.json、config.json、configuration.json、generation_config.json 等至 `$MERGED_DIR`，再重新执行 eval 流程。
 
 **基座/合并/评测一致性检查（全量）**：
