@@ -24,6 +24,17 @@
 
 ## bin/ 用户工具
 
+### run_exp.sh
+
+通过实验名（及可选入口脚本）启动实验，从仓库根目录执行实验目录下的脚本。
+
+- **用法**：`bash exps/commons/bin/run_exp.sh <实验名> [入口脚本]`
+- **示例**：
+  - `bash exps/commons/bin/run_exp.sh verl17` — 执行 `exps/verl17/run_local.sh`
+  - `bash exps/commons/bin/run_exp.sh verl18 run_local.sh`
+  - `bash exps/commons/bin/run_exp.sh verl12 run_train_only.sh`
+- 若省略第二参数，默认为 `run_local.sh`。实验目录与入口脚本不存在时会报错并退出。
+
 ### new_exp.sh
 
 从模板复制生成新实验目录，并替换 `__EXP_NAME__`；若存在 **configs/global.yaml** 则同时替换全局路径占位符。
