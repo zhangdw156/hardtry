@@ -1,0 +1,15 @@
+# 转换流水线用：messages → parquet。路径以 verl_meta_config.yaml 为准，请与之同步。
+# 本文件对应 verl_meta_config.data_input_path、data_root、base_model_path；max_samples 为实验参数。
+
+input_path: "/dfs/data/work/hardtry/data/looptool/looptool_openai_messages_fc.jsonl"
+output_dir: "/dfs/data/work/hardtry/data/looptool"
+model_path: "/dfs/data/models/Qwen3-4B-Instruct-2507"
+
+test_size: 0.05
+seed: 42
+num_proc: 8
+data_source: "looptool"
+ability: "function_call"
+max_samples: 1000
+# 限制条数时是否先打乱再取子集；true=随机子集，false=取前 N 条
+shuffle: false
