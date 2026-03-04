@@ -202,16 +202,17 @@ def main() -> None:
             break
 
     if not found:
-        # 追加新行：需要 Framework, Method, Dataset, Status, Notes, Base Model
+        # 追加新行：列顺序与 RESULT.csv 一致（Base Model 在 Dataset 前）
         framework = meta["framework"] or "-"
         method = meta["method"] or "-"
+        base_model = meta["base_model"] or "-"
         dataset = meta["dataset"] or "-"
         notes = meta["notes"] or ""
-        base_model = meta["base_model"] or "-"
         new_row = [
             args.exp_name,
             framework,
             method,
+            base_model,
             dataset,
             mean_str,
             result_strs[0],
@@ -221,7 +222,6 @@ def main() -> None:
             result_strs[4],
             "已完成",
             notes,
-            base_model,
             args.date,
         ]
         rows.append(new_row)

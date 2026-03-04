@@ -1,37 +1,37 @@
-Experiment Name,Framework,Method,Dataset,Mean (%),Result 1 (%),Result 2 (%),Result 3 (%),Result 4 (%),Result 5 (%),Status,Notes,Base Model,实验日期
-lora1,ms-swift,SFT with lora & all response -> loss,hardgen 14k,26.5,26.5,27,27,26.5,25.5,已完成,LoRA 全段拟合 14k；无提升。当时 messages 构造与 Qwen3 系统提示不一致，结果存疑,Qwen3-4B-Instruct-2507,2026-02-04
-lora2,ms-swift,SFT with lora & last response -> loss,hardgen 14k,26,26.5,24.5,26.5,27,25.5,已完成,LoRA 末段拟合 14k；无提升。同上，系统提示不一致,Qwen3-4B-Instruct-2507,2026-02-04
-verl1,verl,GRPO,hardgen 14k,45.7,45,45.5,45.5,45.5,47,已完成,GRPO 14k；显著有效（45.7% vs baseline 27%）。当时系统提示不一致，修复后见 verl4,Qwen3-4B-Instruct-2507,2026-02-04
-verl2,verl,GRPO with lora,hardgen 14k,26.8,26,27.5,26.5,26.5,27.5,已完成,GRPO+LoRA 14k；几乎无提升，疑 LoRA 容量或设置不足,Qwen3-4B-Instruct-2507,2026-02-05
-full1,ms-swift,SFT & all response -> loss,hardgen 14k,23.5,24.5,23.5,23,24,22.5,已完成,全量 SFT 全段 14k；无效甚至略降。系统提示不一致,Qwen3-4B-Instruct-2507,2026-02-05
-full2,ms-swift,SFT & last response -> loss,hardgen 14k,10.6,10.5,11,10.5,10,11,已完成,全量 SFT 末段 14k；效果最差，末段拟合不适合该任务,Qwen3-4B-Instruct-2507,2026-02-05
-baseline_4binstruct,-,-,-,26.9,26.5,26.5,26.5,27.5,27.5,已完成,4B-Instruct 零样本对照；BFCL multi-turn base 约 27%,Qwen3-4B-Instruct-2507,2026-01-31
-baseline_4b,-,-,-,42.7,41.5,42.5,41.5,44.5,43.5,已完成,4B 原始基座零样本；BFCL multi-turn base 约 42.7%，介于 Instruct(27%) 与 Thinking(60%) 之间,Qwen3-4B,2026-03-02
-baseline_4bthinking,-,-,-,60,60,62,57,62,59,已完成,4B-Thinking 零样本；BFCL multi-turn base 约 60%，明显高于 Instruct,Qwen3-4B-Thinking-2507,2026-02-28
-baseline_8b,-,-,-,,,,,,,未完成,8B 零样本；待跑,Qwen3-8B,
-full4,ms-swift,SFT & all response -> loss,hardgen 14k,47.3,47,47.5,47.5,47,47.5,已完成,修复代码后 14k 全量 SFT；有效（47.3%），优于 verl4；与 verl1 同数据不同实现,Qwen3-4B-Instruct-2507,2026-02-11
-full3,ms-swift,SFT & all response -> loss,gem 5k,12.7,13,12.5,13,13,12,已完成,gem 5k 全量 SFT；效果差。分析：gem 数据 token 短、质量存疑，SFT/RL 均差,Qwen3-4B-Instruct-2507,2026-02-10
-verl3,verl,GRPO,gem 5k,0.4,0.5,0,0.5,0.5,0.5,已完成,GRPO gem 5k；几乎为 0。与 full3 印证 gem 数据问题,Qwen3-4B-Instruct-2507,2026-02-11
-verl5,verl,GRPO,gem 2k,2,2,2,2,2,2,已完成,GRPO gem 2k（5k 过滤）；仍极差。进一步印证数据质量主导,Qwen3-4B-Instruct-2507,2026-02-12
-lora3,ms-swift,SFT with lora & all response -> loss,hardgen 14k,26.6,27,27,26,25.5,27.5,已完成,LoRA 全段 14k（修复后）；无效，支持「LoRA 对该任务不足」的猜测,Qwen3-4B-Instruct-2507,2026-02-12
-verl4,verl,GRPO,hardgen 14k,42.6,43.5,42.5,41.5,43,42.5,已完成,GRPO 14k 修复版；42.6% 有效但低于 verl1（45.7%），复现/随机性待查,Qwen3-4B-Instruct-2507,2026-02-12
-full5,ms-swift,SFT & all response -> loss,hardgen 1k,37.8,38,38.5,38,37,37.5,已完成,1k 全量 SFT（原始 json 划分）；37.8% 超 baseline。与 full9 差异在数据来源/划分,Qwen3-4B-Instruct-2507,2026-02-27
-full6,ms-swift,SFT & all response -> loss,hardgen 100,30.4,30,30,31,30.5,30.5,已完成,100 条 SFT（非 1k）；30.5% 仍超 baseline，说明小数据也可有效,Qwen3-4B-Instruct-2507,2026-02-27
-full7,ms-swift,SFT & all response -> loss,looptool 1k,26.2,25,27,25.5,27.5,26,已完成,looptool 1k 全量 SFT；几乎无效甚至略降。对比 full5：数据源/任务分布不同导致效果差,Qwen3-4B-Instruct-2507,2026-02-27
-verl6,verl,GRPO,looptool 1k,27.5,28.5,27,28,27.5,26.5,已完成,GRPO looptool 1k；几乎无下降但无提升。与 full7 一致：该数据源收益有限,Qwen3-4B-Instruct-2507,2026-02-27
-verl7,verl,GRPO,hardgen 1k,61.7,63,63,60.5,63,59,已完成,4B-Thinking + GRPO + reward_fn_egpo；61.7%。与 verl8 同数据同奖励；GRPO/EGPO 水平接近,Qwen3-4B-Thinking-2507,2026-02-28
-verl8,verl,EGPO,hardgen 1k,61.9,61,62,61,62.5,63,已完成,4B-Thinking + EGPO + reward_fn_egpo；61.9%。实现有误：用了整段 response 熵而非 CoT 熵，需重跑验证,Qwen3-4B-Thinking-2507,2026-02-28
-verl9,verl,GRPO,hardgen 1k,25.2,25.5,26,25,25,24.5,已完成,4B-Instruct + GRPO + reward_fn_grpo（无 think 块）；25.2% 几乎无效果。对比 verl7：Instruct 基座+同数据 RL 收益远低于 Thinking,Qwen3-4B-Instruct-2507,2026-03-02
-full8,ms-swift,SFT & all response -> loss,hardgen 1k,6.9,8,5.5,8,7,6,已完成,4B-Thinking + SFT + template qwen3；6.9% 异常差，疑 template/CoT 对齐或数据格式问题，待查,Qwen3-4B-Thinking-2507,2026-03-02
-full9,ms-swift,SFT & all response -> loss,hardgen 1k,25.8,26.5,25.5,25.5,25.5,26,已完成,4B-Instruct + SFT（convert→parquet→jsonl 同 RL 数据）；25.8% 略低于 baseline。与 full5 差异在数据划分/预处理,Qwen3-4B-Instruct-2507,2026-02-28
-verl10,verl,GRPO,hardgen_1k_shuffle,60.7,62.5,59.5,62,59.5,60,已完成,4B-Thinking + reward_fn_grpo；60.5% 与同基座 baseline_4bthinking（约 60%）持平略高；与 full10/full11 同数据,Qwen3-4B-Thinking-2507,2026-03-02
-verl11,verl,EGPO,hardgen_1k_shuffle,62.1,63,62,61.5,62.5,61.5,已完成,4B-Thinking + reward_fn_egpo（修正后）；62.1% 与 verl10（GRPO 60.5%）同数据，EGPO 略高；与 verl10/12 同数据,Qwen3-4B-Thinking-2507,2026-03-02
-verl12,verl,GRPO,hardgen_1k_shuffle,28.9,29,28.5,28.5,29.5,29,已完成,4B-Instruct + reward_fn_grpo；与 verl10/11 同数据，对比 Instruct vs Thinking 基座；29.1% 接近 baseline_4binstruct,Qwen3-4B-Instruct-2507,2026-03-03
-verl13,verl,GRPO,hardgen_1k_shuffle,24.8,25.5,24.5,25,24.5,24.5,已完成,4B-Instruct + reward_fn（对比奖励函数）；24.8% 与 verl12（reward_fn_grpo 29.1%）同数据，reward_fn 略低,Qwen3-4B-Instruct-2507,2026-03-04
-verl15,verl,EGPO,hardgen_1k,63.5,63,64,64.5,62.5,63.5,已完成,4B-Thinking + EGPO + reward_fn_egpo（hardgen_1k 重跑）；63.5% 高于 verl7（GRPO 61.7%），EGPO 有效,Qwen3-4B-Thinking-2507,2026-03-04
-verl17,verl,EGPO,hardgen 14k,54.9,57,55,52.5,57.5,52.5,已完成,4B-Thinking + EGPO + reward_fn_egpo（hardgen 全量）；54.9% 低于 hardgen_1k 的 verl15（63.5%），全量数据需进一步调参,Qwen3-4B-Thinking-2507,2026-03-04
-baseline_4b_2,-,-,-,43.2,43.5,41,44.5,41,46,已完成,4B 基座再次评测（复现确认）；与 baseline_4b(42.7%) 接近,Qwen3-4B,2026-03-03
-baseline_4binstruct_2,-,-,-,26.1,27,26,26,25.5,26,已完成,4B-Instruct 再次评测；与 baseline_4binstruct(27.1%) 接近,Qwen3-4B-Instruct-2507,2026-03-03
-baseline_4bthinking_2,-,-,-,58.1,56,63.5,55.5,56,59.5,已完成,4B-Thinking 再次评测；与 baseline_4bthinking(60%) 接近,Qwen3-4B-Thinking-2507,2026-03-03
-full10,ms-swift,SFT & all response -> loss,hardgen_1k_shuffle,45.6,45.5,46.5,44.5,46.5,45,已完成,4B-Instruct SFT；45.6% 明显高于同基座 baseline_4binstruct（约 27%）；与 verl10/11/12 同数据,Qwen3-4B-Instruct-2507,2026-03-02
-full11,ms-swift,SFT & all response -> loss,hardgen_1k_shuffle,36.2,36.5,35.5,36,37,36,已完成,4B-Thinking SFT；36.2% 明显低于同基座 baseline_4bthinking（约 60%），SFT 在该数据上拉低 Thinking 零样本表现；同数据下 verl10（GRPO）60.5% 保持基座水平,Qwen3-4B-Thinking-2507,2026-03-02
+Experiment Name,Framework,Method,Base Model,Dataset,Mean (%),Result 1 (%),Result 2 (%),Result 3 (%),Result 4 (%),Result 5 (%),Status,Notes,实验日期
+lora1,ms-swift,SFT with lora & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,26.5,26.5,27,27,26.5,25.5,已完成,LoRA 全段拟合 14k；无提升。当时 messages 构造与 Qwen3 系统提示不一致，结果存疑,2026-02-04
+lora2,ms-swift,SFT with lora & last response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,26,26.5,24.5,26.5,27,25.5,已完成,LoRA 末段拟合 14k；无提升。同上，系统提示不一致,2026-02-04
+verl1,verl,GRPO,Qwen3-4B-Instruct-2507,hardgen 14k,45.7,45,45.5,45.5,45.5,47,已完成,GRPO 14k；显著有效（45.7% vs baseline 27%）。当时系统提示不一致，修复后见 verl4,2026-02-04
+verl2,verl,GRPO with lora,Qwen3-4B-Instruct-2507,hardgen 14k,26.8,26,27.5,26.5,26.5,27.5,已完成,GRPO+LoRA 14k；几乎无提升，疑 LoRA 容量或设置不足,2026-02-05
+full1,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,23.5,24.5,23.5,23,24,22.5,已完成,全量 SFT 全段 14k；无效甚至略降。系统提示不一致,2026-02-05
+full2,ms-swift,SFT & last response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,10.6,10.5,11,10.5,10,11,已完成,全量 SFT 末段 14k；效果最差，末段拟合不适合该任务,2026-02-05
+baseline_4binstruct,-,-,Qwen3-4B-Instruct-2507,-,26.9,26.5,26.5,26.5,27.5,27.5,已完成,4B-Instruct 零样本对照；BFCL multi-turn base 约 27%,2026-01-31
+baseline_4b,-,-,Qwen3-4B,-,42.7,41.5,42.5,41.5,44.5,43.5,已完成,4B 原始基座零样本；BFCL multi-turn base 约 42.7%，介于 Instruct(27%) 与 Thinking(60%) 之间,2026-03-02
+baseline_4bthinking,-,-,Qwen3-4B-Thinking-2507,-,60,60,62,57,62,59,已完成,4B-Thinking 零样本；BFCL multi-turn base 约 60%，明显高于 Instruct,2026-02-28
+baseline_8b,-,-,Qwen3-8B,-,,,,,,,未完成,8B 零样本；待跑,
+full4,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,47.3,47,47.5,47.5,47,47.5,已完成,修复代码后 14k 全量 SFT；有效（47.3%），优于 verl4；与 verl1 同数据不同实现,2026-02-11
+full3,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,gem 5k,12.7,13,12.5,13,13,12,已完成,gem 5k 全量 SFT；效果差。分析：gem 数据 token 短、质量存疑，SFT/RL 均差,2026-02-10
+verl3,verl,GRPO,Qwen3-4B-Instruct-2507,gem 5k,0.4,0.5,0,0.5,0.5,0.5,已完成,GRPO gem 5k；几乎为 0。与 full3 印证 gem 数据问题,2026-02-11
+verl5,verl,GRPO,Qwen3-4B-Instruct-2507,gem 2k,2,2,2,2,2,2,已完成,GRPO gem 2k（5k 过滤）；仍极差。进一步印证数据质量主导,2026-02-12
+lora3,ms-swift,SFT with lora & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 14k,26.6,27,27,26,25.5,27.5,已完成,LoRA 全段 14k（修复后）；无效，支持「LoRA 对该任务不足」的猜测,2026-02-12
+verl4,verl,GRPO,Qwen3-4B-Instruct-2507,hardgen 14k,42.6,43.5,42.5,41.5,43,42.5,已完成,GRPO 14k 修复版；42.6% 有效但低于 verl1（45.7%），复现/随机性待查,2026-02-12
+full5,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 1k,37.8,38,38.5,38,37,37.5,已完成,1k 全量 SFT（原始 json 划分）；37.8% 超 baseline。与 full9 差异在数据来源/划分,2026-02-27
+full6,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 100,30.4,30,30,31,30.5,30.5,已完成,100 条 SFT（非 1k）；30.5% 仍超 baseline，说明小数据也可有效,2026-02-27
+full7,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,looptool 1k,26.2,25,27,25.5,27.5,26,已完成,looptool 1k 全量 SFT；几乎无效甚至略降。对比 full5：数据源/任务分布不同导致效果差,2026-02-27
+verl6,verl,GRPO,Qwen3-4B-Instruct-2507,looptool 1k,27.5,28.5,27,28,27.5,26.5,已完成,GRPO looptool 1k；几乎无下降但无提升。与 full7 一致：该数据源收益有限,2026-02-27
+verl7,verl,GRPO,Qwen3-4B-Thinking-2507,hardgen 1k,61.7,63,63,60.5,63,59,已完成,4B-Thinking + GRPO + reward_fn_egpo；61.7%。与 verl8 同数据同奖励；GRPO/EGPO 水平接近,2026-02-28
+verl8,verl,EGPO,Qwen3-4B-Thinking-2507,hardgen 1k,61.9,61,62,61,62.5,63,已完成,4B-Thinking + EGPO + reward_fn_egpo；61.9%。实现有误：用了整段 response 熵而非 CoT 熵，需重跑验证,2026-02-28
+verl9,verl,GRPO,Qwen3-4B-Instruct-2507,hardgen 1k,25.2,25.5,26,25,25,24.5,已完成,4B-Instruct + GRPO + reward_fn_grpo（无 think 块）；25.2% 几乎无效果。对比 verl7：Instruct 基座+同数据 RL 收益远低于 Thinking,2026-03-02
+full8,ms-swift,SFT & all response -> loss,Qwen3-4B-Thinking-2507,hardgen 1k,6.9,8,5.5,8,7,6,已完成,4B-Thinking + SFT + template qwen3；6.9% 异常差，疑 template/CoT 对齐或数据格式问题，待查,2026-03-02
+full9,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen 1k,25.8,26.5,25.5,25.5,25.5,26,已完成,4B-Instruct + SFT（convert→parquet→jsonl 同 RL 数据）；25.8% 略低于 baseline。与 full5 差异在数据划分/预处理,2026-02-28
+verl10,verl,GRPO,Qwen3-4B-Thinking-2507,hardgen_1k_shuffle,60.7,62.5,59.5,62,59.5,60,已完成,4B-Thinking + reward_fn_grpo；60.5% 与同基座 baseline_4bthinking（约 60%）持平略高；与 full10/full11 同数据,2026-03-02
+verl11,verl,EGPO,Qwen3-4B-Thinking-2507,hardgen_1k_shuffle,62.1,63,62,61.5,62.5,61.5,已完成,4B-Thinking + reward_fn_egpo（修正后）；62.1% 与 verl10（GRPO 60.5%）同数据，EGPO 略高；与 verl10/12 同数据,2026-03-02
+verl12,verl,GRPO,Qwen3-4B-Instruct-2507,hardgen_1k_shuffle,28.9,29,28.5,28.5,29.5,29,已完成,4B-Instruct + reward_fn_grpo；与 verl10/11 同数据，对比 Instruct vs Thinking 基座；29.1% 接近 baseline_4binstruct,2026-03-03
+verl13,verl,GRPO,Qwen3-4B-Instruct-2507,hardgen_1k_shuffle,24.8,25.5,24.5,25,24.5,24.5,已完成,4B-Instruct + reward_fn（对比奖励函数）；24.8% 与 verl12（reward_fn_grpo 29.1%）同数据，reward_fn 略低,2026-03-04
+verl15,verl,EGPO,Qwen3-4B-Thinking-2507,hardgen_1k,63.5,63,64,64.5,62.5,63.5,已完成,4B-Thinking + EGPO + reward_fn_egpo（hardgen_1k 重跑）；63.5% 高于 verl7（GRPO 61.7%），EGPO 有效,2026-03-04
+verl17,verl,EGPO,Qwen3-4B-Thinking-2507,hardgen 14k,54.9,57,55,52.5,57.5,52.5,已完成,4B-Thinking + EGPO + reward_fn_egpo（hardgen 全量）；54.9% 低于 hardgen_1k 的 verl15（63.5%），全量数据需进一步调参,2026-03-04
+baseline_4b_2,-,-,Qwen3-4B,-,43.2,43.5,41,44.5,41,46,已完成,4B 基座再次评测（复现确认）；与 baseline_4b(42.7%) 接近,2026-03-03
+baseline_4binstruct_2,-,-,Qwen3-4B-Instruct-2507,-,26.1,27,26,26,25.5,26,已完成,4B-Instruct 再次评测；与 baseline_4binstruct(27.1%) 接近,2026-03-03
+baseline_4bthinking_2,-,-,Qwen3-4B-Thinking-2507,-,58.1,56,63.5,55.5,56,59.5,已完成,4B-Thinking 再次评测；与 baseline_4bthinking(60%) 接近,2026-03-03
+full10,ms-swift,SFT & all response -> loss,Qwen3-4B-Instruct-2507,hardgen_1k_shuffle,45.6,45.5,46.5,44.5,46.5,45,已完成,4B-Instruct SFT；45.6% 明显高于同基座 baseline_4binstruct（约 27%）；与 verl10/11/12 同数据,2026-03-02
+full11,ms-swift,SFT & all response -> loss,Qwen3-4B-Thinking-2507,hardgen_1k_shuffle,36.2,36.5,35.5,36,37,36,已完成,4B-Thinking SFT；36.2% 明显低于同基座 baseline_4bthinking（约 60%），SFT 在该数据上拉低 Thinking 零样本表现；同数据下 verl10（GRPO）60.5% 保持基座水平,2026-03-02
