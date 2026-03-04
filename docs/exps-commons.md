@@ -60,6 +60,16 @@
 - 若省略后两个参数，从 **exps/commons/configs/global.yaml** 读取 `train_n_gpus`、`eval_tensor_parallel_size`。
 - 会改写：**configs/** 与 **conf/** 下的 `verl_train_config.yaml`、`verl_common_config*.yaml`（训练卡数）、`vllm_config*.yaml`（评估 tensor_parallel_size）；若存在 **scripts/train_local.sh** 且含 `NPROC_PER_NODE`/`CUDA_VISIBLE_DEVICES`（Swift 实验），则一并按训练用卡数更新。
 
+### summarize_eval_to_result.py
+
+将某实验的 **eval5_results** 中 5 次 run 的 **Base** 指标汇总到 **exps/RESULT.csv**（更新 Mean、Result 1–5、Status、实验日期）。
+
+- **用法**：`python exps/commons/bin/summarize_eval_to_result.py <实验名> [选项]`
+- **示例**：
+  - `python exps/commons/bin/summarize_eval_to_result.py verl17` — 从 `exps/verl17/eval5_results` 读取 5 个 `data_multi_turn_run_*` csv，若 RESULT 中已有 verl17 则更新该行，否则追加（需提供元数据）。
+  - `python exps/commons/bin/summarize_eval_to_result.py new_exp --framework verl --method EGPO --dataset "hardgen 14k" --notes "说明" --base-model "Qwen3-4B-Thinking-2507"`
+- **选项**：`--eval-dir` 指定 eval5_results 路径；`--result-csv` 指定 RESULT 文件；`--date` 指定实验日期；新增行时可传 `--framework/--method/--dataset/--notes/--base-model`，或在实验目录下放置 **result_meta.yaml**（键：framework、method、dataset、notes、base_model）。
+
 ---
 
 ## sbin/ 实验脚本转调
