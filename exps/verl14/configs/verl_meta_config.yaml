@@ -30,7 +30,7 @@ verl_meta_config:
 
   # 按实验修改：base 模型（convert/训练用）；merge 后推理用 merged_model_path
   base_model_path: /dfs/data/models/Qwen3-4B-Thinking-2507
-  merged_model_path: /dfs/data/models/hardtry-4b-thinking-verl14
+  merged_model_path: /dfs/data/models/hardtry-4b-verl14
 
   # 按实验修改：数据根目录（parquet 与 convert 输出）
   data_root: /dfs/data/work/hardtry/data/hardgen_1k

@@ -15,15 +15,15 @@ fi
 # echo "=========================================="
 # bash scripts/convert_messages_to_verl.sh
 
-echo "=========================================="
-echo "步骤 2/4: train (GRPO)"
-echo "=========================================="
-bash scripts/train_local.sh
+# echo "=========================================="
+# echo "步骤 2/4: train (GRPO)"
+# echo "=========================================="
+# bash scripts/train_local.sh
 
-echo "=========================================="
-echo "步骤 3/4: merge"
-echo "=========================================="
-bash scripts/merge_verl_fsdp_local.sh
+# echo "=========================================="
+# echo "步骤 3/4: merge"
+# echo "=========================================="
+# bash scripts/merge_verl_fsdp_local.sh
 
 echo "=========================================="
 echo "步骤 4/4: eval"
