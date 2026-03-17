@@ -10,10 +10,10 @@ if [ -f "/dfs/data/sbin/setup.sh" ]; then
     source /dfs/data/sbin/setup.sh
 fi
 
-echo "=========================================="
-echo "步骤 1/4: convert_messages_to_verl"
-echo "=========================================="
-bash scripts/convert_messages_to_verl.sh
+# echo "=========================================="
+# echo "步骤 1/4: convert_messages_to_verl"
+# echo "=========================================="
+# bash scripts/convert_messages_to_verl.sh
 
 echo "=========================================="
 echo "步骤 2/4: train (GRPO)"
