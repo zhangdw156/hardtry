@@ -1,0 +1,28 @@
+# Verl 实验模板
+
+用 `exps/commons/bin/new_exp.sh verl <实验名>` 从本模板复制到 `exps/<实验名>`。
+
+## 配置约定
+
+每个 verl 实验**主配置为两个文件**，依赖关系：**verl_train_config → verl_meta_config**。train_local.sh 使用 `--config-name=verl_train_config` 直接加载训练配置。
+
+| 文件 | 用途 |
+|------|------|
+| **verl_meta_config.yaml** | 实验元信息（顶层 key 为 `verl_meta_config`）：实验名、工作根路径、模型根路径、各 venv、checkpoint/评估/数据等路径（被 verl_train_config 引用）。 |
+| **verl_train_config.yaml** | 训练配置：算法、数据、actor/rollout、trainer 超参、reward、Ray 等；路径通过 `${verl_meta_config.xxx}` 引用；train_local.sh 直接加载本文件。 |
+
+- **vllm_config.yaml**、**eval_config5.yaml**、**convert_messages_to_verl_config.yaml** 为各流水线所需，路径等元信息以 `verl_meta_config.yaml` 为准，修改元信息时请与之同步。
+
+## 占位符（均在 verl_meta_config 中；new_exp.sh 只替换 verl19）
+
+| 占位符 | 说明 | 生成时 |
+|--------|------|--------|
+| `verl19` | 实验名 | 自动替换 |
+| `/dfs/data/work/hardtry` | 工作/仓库根路径 | 需手动替换 |
+| `/dfs/data/models` | 模型根路径 | 需手动替换 |
+| `/dfs/data/uv-venv/verl` | verl 虚拟环境路径 | 需手动替换 |
+| `/dfs/data/uv-venv/gorilla` | 评估用 venv 路径 | 需手动替换 |
+
+生成后在实验目录做一次全局替换上述占位符；实验参数（batch、GPU 数等）在 **verl_train_config.yaml** 中按注释修改。执行：
+
+`bash exps/<实验名>/run_local.sh`
